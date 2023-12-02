@@ -1,0 +1,1 @@
+package com.ea.architecture.domain.driven.domain.user.model;
