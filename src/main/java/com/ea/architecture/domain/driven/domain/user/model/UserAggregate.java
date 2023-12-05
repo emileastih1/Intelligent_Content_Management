@@ -1,7 +1,7 @@
 package com.ea.architecture.domain.driven.domain.user.model;
 
 import com.ea.architecture.domain.driven.application.user.dto.AddressDto;
-import com.ea.architecture.domain.driven.domain.user.model.common.model.UniqueId;
+import com.ea.architecture.domain.driven.domain.common.model.UniqueId;
 import org.springframework.data.domain.AbstractAggregateRoot;
 
 /**

@@ -1,4 +1,4 @@
-package com.ea.architecture.domain.driver;
+package com.ea.architecture.domain.driven;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
