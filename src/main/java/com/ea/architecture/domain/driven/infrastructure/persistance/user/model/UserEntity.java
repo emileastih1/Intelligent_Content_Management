@@ -1,12 +1,14 @@
-package com.ea.architecture.domain.driven.infrastructure.user;
+package com.ea.architecture.domain.driven.infrastructure.persistance.user.model;
 
 import com.ea.architecture.domain.driven.application.user.dto.AddressDto;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
+@Table(name ="USERS")
 public class UserEntity {
 
     @GeneratedValue
@@ -22,5 +24,6 @@ public class UserEntity {
     @Column(name = "AGE")
     private String age;
 
-    private AddressDto address;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
+    private AddressEntity address;
 }

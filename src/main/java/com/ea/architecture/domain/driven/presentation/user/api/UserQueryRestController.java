@@ -1,4 +1,4 @@
-package com.ea.architecture.domain.driven.presentation.user.adapter;
+package com.ea.architecture.domain.driven.presentation.user.api;
 
 import com.ea.architecture.domain.driven.application.user.port.UserManagementService;
 import com.ea.architecture.domain.driven.presentation.BaseQueryRestController;
@@ -8,9 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@RequestMapping("/user")
+@RestController
 public class UserQueryRestController extends BaseQueryRestController {
 
     UserManagementService userManagementService;
@@ -22,8 +22,8 @@ public class UserQueryRestController extends BaseQueryRestController {
         this.userPresentationMapper = userExpositionMapper;
     }
 
-    @GetMapping("/find")
+    @GetMapping("/v1/person/search")
     public ResponseEntity<UserDto> findUser(@RequestBody UserDto dto) {
-        return new ResponseEntity<>((userPresentationMapper.domainToDto(userManagementService.findUser(dto))), HttpStatus.OK);
+        return new ResponseEntity<>((userPresentationMapper.domainToDto(userManagementService.getUserByFilter(userPresentationMapper.dtoToDomain(dto)))), HttpStatus.OK);
     }
 }

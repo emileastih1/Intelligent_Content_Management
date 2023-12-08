@@ -3,7 +3,7 @@ package com.ea.architecture.domain.driven.application.user.impl;
 import com.ea.architecture.domain.driven.application.mapper.ApplicationMapper;
 import com.ea.architecture.domain.driven.application.user.port.UserManagementService;
 import com.ea.architecture.domain.driven.application.user.dto.UserDto;
-import com.ea.architecture.domain.driven.domain.user.port.UserDomainService;
+import com.ea.architecture.domain.driven.domain.user.repository.UserDomainServicePort;
 import com.ea.architecture.domain.driven.domain.user.model.UserAggregate;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -17,16 +17,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserManagementServiceImpl implements UserManagementService {
 
-    UserDomainService userDomainService;
+    UserDomainServicePort userDomainServicePort;
     ApplicationMapper applicationMapper;
 
-    public UserManagementServiceImpl(UserDomainService userDomainService, ApplicationMapper applicationMapper) {
-        this.userDomainService = userDomainService;
+    public UserManagementServiceImpl(UserDomainServicePort userDomainServicePort, ApplicationMapper applicationMapper) {
+        this.userDomainServicePort = userDomainServicePort;
         this.applicationMapper = applicationMapper;
     }
 
     @Override
-    public UserAggregate findUser(UserDto userDTO) {
-        return userDomainService.findUser(applicationMapper.dtoToDomain(userDTO));
+    public UserAggregate getUserByFilter(UserAggregate userAggregate) {
+        return userDomainServicePort.findUser(userAggregate);
     }
 }

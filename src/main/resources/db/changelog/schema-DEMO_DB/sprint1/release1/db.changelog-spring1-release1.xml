@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <!-- Change Set for USERS Table -->
+    <changeSet id="create-table-users" author="eas" failOnError="true">
+        <comment>create table to store users information</comment>
+        <sqlFile
+                path="db/changelog/schema-DEMO_DB/sprint1/release1/model/USERS-create.sql"
+                splitStatements="true"
+                stripComments="true"
+        />
+    </changeSet>
+
+    <!-- Change Set for ADDRESS Table -->
+    <changeSet id="create-table-address" author="liquibase-demo-service">
+        <comment>create table address that is linked to users by a one to one relation</comment>
+        <sqlFile
+                path="db/changelog/schema-DEMO_DB/sprint1/release1/model/ADDRESS-create.sql"
+                splitStatements="true"
+                stripComments="true"
+        />
+    </changeSet>
+
+</databaseChangeLog>

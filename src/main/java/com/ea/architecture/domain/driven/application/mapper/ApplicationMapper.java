@@ -7,7 +7,6 @@ import org.springframework.data.domain.AbstractAggregateRoot;
 import org.springframework.stereotype.Component;
 
 @Component
-@Mapper
-public interface ApplicationMapper {
-    <T extends AbstractAggregateRoot<T>> T dtoToDomain(Record dto);
+public class ApplicationMapper {
+
 }
