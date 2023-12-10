@@ -4,10 +4,7 @@ server:
 spring:
   application:
     name: spring-domain-driver-design
-  datasource:
-    url: jdbc:postgresql://localhost:5432/DEMO_DB
-    username: postgres
-    password: toor
+
   jpa:
     hibernate:
       ddl-auto: none
@@ -17,6 +14,13 @@ spring:
 
   liquibase:
     change-log: classpath:db/changelog/schema-DEMO_DB/changeLog-master.xml
+
+  docker:
+    compose:
+      skip:
+        in-tests: false
+      enabled: true
+      file: classpath:docker/docker-compose.yml
 
 
 

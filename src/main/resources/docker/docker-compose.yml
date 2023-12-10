@@ -1,0 +1,36 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15.5-alpine3.18
+    ports:
+      - '5432:5432'
+    volumes:
+      - db:/data/db
+    environment:
+      - 'POSTGRES_DB=DEMO_DB'
+      - 'POSTGRES_USER=DEMO_USER'
+      - 'POSTGRES_PASSWORD=toor'
+    networks:
+      backend:
+        aliases:
+          - "database"
+    container_name: spring-postgresql
+  pgadmin:
+    image: dpage/pgadmin4:8.0
+    ports:
+      - '8088:80'
+    environment:
+      PGADMIN_DEFAULT_EMAIL: emileastih1@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: toor
+    networks:
+      backend:
+        aliases:
+          - "pgadmin"
+    container_name: spring-pgadmin
+volumes:
+  db:
+    driver:
+      local
+networks:
+  backend:
+    driver: bridge
