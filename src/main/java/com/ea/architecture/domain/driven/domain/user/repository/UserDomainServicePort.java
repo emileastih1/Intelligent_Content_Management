@@ -9,5 +9,5 @@ import org.springframework.stereotype.Service;
 @Service
 public interface UserDomainServicePort {
 
-    UserAggregate findUser(UserAggregate userAggregate);
+    UserAggregate findUserByFilter(UserAggregate userAggregate) throws Exception;
 }

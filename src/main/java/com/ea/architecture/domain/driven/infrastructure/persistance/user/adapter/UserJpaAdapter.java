@@ -6,6 +6,8 @@ import com.ea.architecture.domain.driven.infrastructure.persistance.user.model.U
 import com.ea.architecture.domain.driven.infrastructure.repository.user.UserJpaRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.function.Supplier;
+
 @Service
 public class UserJpaAdapter implements UserDomainServicePort {
 
@@ -19,8 +21,9 @@ public class UserJpaAdapter implements UserDomainServicePort {
     }
 
     @Override
-    public UserAggregate findUser(UserAggregate userAggregate) {
+    public UserAggregate findUserByFilter(UserAggregate userAggregate) throws Exception {
         UserEntity userEntity = userInfrastructureMapper.domainToEntity(userAggregate);
-        return userInfrastructureMapper.entityToDomain(userJpaRepository.findById(userEntity.getId()).get());
+        return userInfrastructureMapper.entityToDomain(userJpaRepository.findByFirstNameAndLastName(userEntity.getFirstName(), userEntity.getLastName())
+                .orElseThrow(() -> new Exception("User not found with ID: " + userEntity.getId())));
     }
 }

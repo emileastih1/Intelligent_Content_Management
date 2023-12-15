@@ -9,5 +9,5 @@ import org.springframework.stereotype.Service;
 @Service
 public interface UserManagementService {
 
-    UserAggregate getUserByFilter(UserAggregate userAggregate);
+    UserAggregate getUserByFilter(UserAggregate userAggregate) throws Exception;
 }

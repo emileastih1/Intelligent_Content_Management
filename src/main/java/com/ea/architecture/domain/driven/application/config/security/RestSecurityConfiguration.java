@@ -1,8 +1,10 @@
-package com.ea.architecture.domain.driven.application.security;
+package com.ea.architecture.domain.driven.application.config.security;
 
-public class ApiSecurityConfiguration {
+public class RestSecurityConfiguration {
 
     public static final String URL_BASE_PATH = "/api";
+
+    public static final String BASIC_AUTH = "BasicAuth";
 
     //TODO Add permission list names here
     public static final String PERMISSION_PREFIX = "demo-api:";

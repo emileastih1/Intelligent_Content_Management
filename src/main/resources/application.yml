@@ -1,5 +1,7 @@
 server:
     port: 8085
+    servlet:
+      context-path: /ddd
 
 spring:
   application:
@@ -21,6 +23,13 @@ spring:
         in-tests: false
       enabled: true
       file: classpath:docker/docker-compose.yml
+spring-doc:
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    filter: true
+    operations-sorter: alpha
+  api-docs.path: /v3/rest-api-docs
 
 
 
