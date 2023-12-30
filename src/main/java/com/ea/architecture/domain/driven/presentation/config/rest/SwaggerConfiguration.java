@@ -1,7 +1,9 @@
 package com.ea.architecture.domain.driven.presentation.config.rest;
 
 
+import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -19,6 +21,5 @@ public class SwaggerConfiguration {
         this.contextPath = contextPath;
         this.localPort = localPort;
     }
-
 
 }

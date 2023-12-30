@@ -5,10 +5,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -19,9 +21,11 @@ public class BasicAuthSecurity {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests((authz) -> authz
+                .authorizeHttpRequests((auth) -> auth
                         .anyRequest().authenticated()
                 )
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(AbstractHttpConfigurer::disable)
                 .httpBasic(withDefaults());
         return http.build();
     }
@@ -33,7 +37,6 @@ public class BasicAuthSecurity {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        // Load users and passwords from application.yml
         InMemoryUserDetailsManager userDetailsManager = new InMemoryUserDetailsManager();
 
         // Add users with their roles and encoded passwords

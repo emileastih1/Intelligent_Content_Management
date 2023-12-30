@@ -24,6 +24,6 @@ public class UserJpaAdapter implements UserDomainServicePort {
     public UserAggregate findUserByFilter(UserAggregate userAggregate) throws Exception {
         UserEntity userEntity = userInfrastructureMapper.domainToEntity(userAggregate);
         return userInfrastructureMapper.entityToDomain(userJpaRepository.findByFirstNameAndLastName(userEntity.getFirstName(), userEntity.getLastName())
-                .orElseThrow(() -> new Exception("User not found with ID: " + userEntity.getId())));
+                .orElseThrow(() -> new Exception("User not found")));
     }
 }

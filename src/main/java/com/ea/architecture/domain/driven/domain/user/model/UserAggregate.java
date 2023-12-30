@@ -2,7 +2,9 @@ package com.ea.architecture.domain.driven.domain.user.model;
 
 import com.ea.architecture.domain.driven.application.user.dto.AddressDto;
 import com.ea.architecture.domain.driven.domain.common.model.UniqueId;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.domain.AbstractAggregateRoot;
 
@@ -11,6 +13,8 @@ import org.springframework.data.domain.AbstractAggregateRoot;
  */
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserAggregate extends AbstractAggregateRoot<UserAggregate> {
 
     private UniqueId id;
@@ -18,4 +22,7 @@ public class UserAggregate extends AbstractAggregateRoot<UserAggregate> {
     private String lastName;
     private String age;
     private AddressDto address;
+
 }
+
+
