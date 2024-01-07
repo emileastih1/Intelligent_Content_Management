@@ -2,9 +2,8 @@ package com.ea.architecture.domain.driven.presentation.user.api;
 
 import com.ea.architecture.domain.driven.application.config.security.RestSecurityConfiguration;
 import com.ea.architecture.domain.driven.application.user.dto.UserDto;
-import com.ea.architecture.domain.driven.application.user.port.UserManagementService;
-import com.ea.architecture.domain.driven.domain.user.model.UserAggregate;
-import com.ea.architecture.domain.driven.presentation.BaseQueryRestController;
+import com.ea.architecture.domain.driven.application.user.port.query.UserManagementQueryService;
+import com.ea.architecture.domain.driven.presentation.BaseRestController;
 import com.ea.architecture.domain.driven.presentation.user.mapper.UserPresentationMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -25,16 +24,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "User", description = "API gateway to query the user domain")
 @RestController
-public class UserQueryRestController extends BaseQueryRestController {
+public class UserQueryRestController extends BaseRestController {
 
     public static final  Logger logger = LoggerFactory.getLogger(UserQueryRestController.class);
 
-    UserManagementService userManagementService;
+    UserManagementQueryService userManagementQueryService;
 
     UserPresentationMapper userPresentationMapper;
 
-    public UserQueryRestController(UserManagementService userManagementService, UserPresentationMapper userExpositionMapper) {
-        this.userManagementService = userManagementService;
+    public UserQueryRestController(UserManagementQueryService userManagementQueryService, UserPresentationMapper userExpositionMapper) {
+        this.userManagementQueryService = userManagementQueryService;
         this.userPresentationMapper = userExpositionMapper;
     }
 
@@ -51,7 +50,7 @@ public class UserQueryRestController extends BaseQueryRestController {
     @PostMapping(value = "/v1/person/search", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDto> findUser(@RequestBody UserDto dto) throws Exception {
         logger.info("Connected User: " + getConnectedUser());
-        return new ResponseEntity<>((userPresentationMapper.domainToDto(userManagementService.getUserByFilter(userPresentationMapper.dtoToDomain(dto)))), HttpStatus.OK);
+        return new ResponseEntity<>((userPresentationMapper.domainToDto(userManagementQueryService.getUserByFilter(userPresentationMapper.dtoToDomain(dto)))), HttpStatus.OK);
     }
 
     @GetMapping(value = "/test")

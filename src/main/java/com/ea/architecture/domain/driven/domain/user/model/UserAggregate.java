@@ -21,6 +21,8 @@ public class UserAggregate extends AbstractAggregateRoot<UserAggregate> {
     private String firstName;
     private String lastName;
     private String age;
+    //TODO: This should be a value object of the domain
+    //because the domain layer should not be dependent on the application layer
     private AddressDto address;
 
 }

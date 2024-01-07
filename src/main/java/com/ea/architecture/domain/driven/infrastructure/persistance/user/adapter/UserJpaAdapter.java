@@ -1,15 +1,13 @@
 package com.ea.architecture.domain.driven.infrastructure.persistance.user.adapter;
 
 import com.ea.architecture.domain.driven.domain.user.model.UserAggregate;
-import com.ea.architecture.domain.driven.domain.user.repository.UserDomainServicePort;
+import com.ea.architecture.domain.driven.domain.user.repository.UserDomainQueryServicePort;
 import com.ea.architecture.domain.driven.infrastructure.persistance.user.model.UserEntity;
 import com.ea.architecture.domain.driven.infrastructure.repository.user.UserJpaRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.function.Supplier;
-
 @Service
-public class UserJpaAdapter implements UserDomainServicePort {
+public class UserJpaAdapter implements UserDomainQueryServicePort {
 
     UserJpaRepository userJpaRepository;
 

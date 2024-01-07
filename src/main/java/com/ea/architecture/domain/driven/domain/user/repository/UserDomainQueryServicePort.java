@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
  * This class represents the second port connected to the infrastructure layer
  */
 @Service
-public interface UserDomainServicePort {
+public interface UserDomainQueryServicePort {
 
     UserAggregate findUserByFilter(UserAggregate userAggregate) throws Exception;
 }

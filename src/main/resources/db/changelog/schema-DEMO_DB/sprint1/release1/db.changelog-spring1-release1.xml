@@ -54,4 +54,14 @@
         />
     </changeSet>
 
+    <!-- Change Set for Creating DOCUMENT Table -->
+    <changeSet id="create-table-document" author="eas">
+        <comment>create table document that is linked to users by a one to one relation</comment>
+        <sqlFile
+                path="db/changelog/schema-DEMO_DB/sprint1/release1/model/DOCUMENT-create.sql"
+                splitStatements="true"
+                stripComments="true"
+        />
+    </changeSet>
+
 </databaseChangeLog>

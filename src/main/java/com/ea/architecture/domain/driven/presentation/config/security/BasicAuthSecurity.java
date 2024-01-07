@@ -24,8 +24,8 @@ public class BasicAuthSecurity {
                 .authorizeHttpRequests((auth) -> auth
                         .anyRequest().authenticated()
                 )
+                //CSRF is disabled because we will be using JWT token later on
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(AbstractHttpConfigurer::disable)
                 .httpBasic(withDefaults());
         return http.build();
     }

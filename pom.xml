@@ -102,6 +102,14 @@
 			<optional>true</optional>
 		</dependency>
 
+		<!-- This dependency is used to print the package structure into the console -->
+		<dependency>
+			<groupId>org.qunix</groupId>
+			<artifactId>structure-maven-plugin</artifactId>
+			<version>0.0.2</version>
+			<optional>true</optional>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -179,6 +187,35 @@
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+
+			<!-- This plugin is used to print the package structure into the console -->
+			<plugin>
+				<groupId>org.qunix</groupId>
+				<artifactId>structure-maven-plugin</artifactId>
+				<version>0.0.2</version>
+				<inherited>false</inherited>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<goals>
+							<goal>
+								files
+							</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<ignores>
+						<ignore>target.*</ignore>
+						<ignore>.git</ignore>
+						<ignore>.idea</ignore>
+						<ignore>.mvn</ignore>
+						<ignore>\.settings.*</ignore>
+						<ignore>\.project.*</ignore>
+						<ignore>\.classpath.*</ignore>
+					</ignores>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
