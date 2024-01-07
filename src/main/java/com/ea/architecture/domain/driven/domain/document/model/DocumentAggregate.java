@@ -2,16 +2,14 @@ package com.ea.architecture.domain.driven.domain.document.model;
 
 import com.ea.architecture.domain.driven.domain.common.model.UniqueId;
 import com.ea.architecture.domain.driven.domain.document.vo.FileSize;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.domain.AbstractAggregateRoot;
 import java.time.ZonedDateTime;
 
 /**
  * This is our document aggregate root
  */
+@Builder
 @Getter
 @Setter
 @NoArgsConstructor

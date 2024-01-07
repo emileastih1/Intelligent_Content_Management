@@ -11,4 +11,5 @@ public interface DocumentManagementQueryService {
     DocumentAggregate findDocumentByFilter(DocumentAggregate documentAggregate);
     DocumentAggregate extractDocumentByName(String documentName);
     DocumentAggregate extractDocumentByFilter(DocumentAggregate documentAggregate);
+    DocumentAggregate findDocumentById(String id);
 }
