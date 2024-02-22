@@ -1,10 +1,9 @@
 package com.ea.architecture.domain.driven.common;
 
-import com.ea.architecture.domain.driven.presentation.BaseRestController;
+import com.ea.architecture.domain.driven.presentation.common.api.BaseRestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.junit.jupiter.api.BeforeAll;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;

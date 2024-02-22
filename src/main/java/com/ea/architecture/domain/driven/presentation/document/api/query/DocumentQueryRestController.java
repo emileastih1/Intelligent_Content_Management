@@ -1,9 +1,9 @@
-package com.ea.architecture.domain.driven.presentation.document.api;
+package com.ea.architecture.domain.driven.presentation.document.api.query;
 
 import com.ea.architecture.domain.driven.application.config.security.RestSecurityConfiguration;
 import com.ea.architecture.domain.driven.application.document.dto.DocumentDto;
 import com.ea.architecture.domain.driven.application.document.port.query.DocumentManagementQueryService;
-import com.ea.architecture.domain.driven.presentation.BaseRestController;
+import com.ea.architecture.domain.driven.presentation.common.api.BaseRestController;
 import com.ea.architecture.domain.driven.presentation.document.mapper.DocumentPresentationMapper;
 import com.ea.architecture.domain.driven.presentation.user.api.UserQueryRestController;
 import io.swagger.v3.oas.annotations.Operation;
@@ -44,8 +44,9 @@ public class DocumentQueryRestController extends BaseRestController {
                     ))
             }
     )
-    @GetMapping(value = "/v1/document/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DocumentDto> findDocument(@PathVariable String id) throws Exception {
+    @GetMapping(value = "/v1/document/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<DocumentDto> findDocument(@PathVariable Long id) throws Exception {
         return new ResponseEntity<>((documentPresentationMapper.domainToDto(documentManagementQueryService.findDocumentById(id))), HttpStatus.OK);
     }
+
 }

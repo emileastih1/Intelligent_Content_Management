@@ -5,8 +5,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface DocumentDomainCommandServicePort {
-    DocumentAggregate addDocumentToLocation(DocumentAggregate document, String location);
-    DocumentAggregate copyDocumentToLocation(DocumentAggregate document, String location);
-    DocumentAggregate moveDocumentToLocation(DocumentAggregate document, String location);
+    String addDocument(DocumentAggregate document);
+    DocumentAggregate duplicateDocument(DocumentAggregate document);
     DocumentAggregate deleteDocument(DocumentAggregate document);
 }

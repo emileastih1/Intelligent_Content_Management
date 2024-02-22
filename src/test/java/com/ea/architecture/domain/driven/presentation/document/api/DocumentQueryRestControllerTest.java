@@ -5,6 +5,7 @@ import com.ea.architecture.domain.driven.application.document.port.query.Documen
 import com.ea.architecture.domain.driven.common.AbstractRestTest;
 import com.ea.architecture.domain.driven.domain.common.model.UniqueId;
 import com.ea.architecture.domain.driven.domain.document.model.DocumentAggregate;
+import com.ea.architecture.domain.driven.presentation.document.api.query.DocumentQueryRestController;
 import com.ea.architecture.domain.driven.presentation.document.mapper.DocumentPresentationMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -32,13 +33,13 @@ public class DocumentQueryRestControllerTest extends AbstractRestTest<DocumentQu
 
         DocumentAggregate documentAggregate = DocumentAggregate.builder()
                 .id(new UniqueId(1L))
-                .name("Legal Document")
+                .documentName("Legal Document")
                 .owner("98785")
                 .location("/home/documents")
                 .build();
 
         //When
-        Mockito.when(documentManagementQueryService.findDocumentById("1")).thenReturn(documentAggregate);
+        Mockito.when(documentManagementQueryService.findDocumentById(1L)).thenReturn(documentAggregate);
         Mockito.when(documentPresentationMapper.domainToDto(documentAggregate)).thenReturn(document);
 
         //Then

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface DocumentDomainQueryServicePort {
+    DocumentAggregate retrieveDocumentById(Long documentId);
     DocumentAggregate retrieveDocumentByName(String documentName);
     DocumentAggregate retrieveDocumentByFilter(DocumentAggregate documentAggregate);
     DocumentAggregate extractDocumentByName(String documentName);

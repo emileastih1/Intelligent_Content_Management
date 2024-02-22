@@ -3,7 +3,7 @@ package com.ea.architecture.domain.driven.presentation.user.api;
 import com.ea.architecture.domain.driven.application.config.security.RestSecurityConfiguration;
 import com.ea.architecture.domain.driven.application.user.dto.UserDto;
 import com.ea.architecture.domain.driven.application.user.port.query.UserManagementQueryService;
-import com.ea.architecture.domain.driven.presentation.BaseRestController;
+import com.ea.architecture.domain.driven.presentation.common.api.BaseRestController;
 import com.ea.architecture.domain.driven.presentation.user.mapper.UserPresentationMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

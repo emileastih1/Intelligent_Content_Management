@@ -27,8 +27,31 @@ services:
         aliases:
           - "pgadmin"
     container_name: spring-pgadmin
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.1
+    ports:
+      - "9200:9200"
+    volumes:
+        - elasticsearch-data:/usr/share/elasticsearch/data
+    networks:
+      backend:
+        aliases:
+          - "elasticsearch"
+    environment:
+      - discovery.type=single-node
+      - node.name=elasticsearch01
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    deploy:
+        resources:
+            limits:
+              memory: 1GB
+    container_name: elasticsearch01
 volumes:
   db:
+    driver:
+      local
+  elasticsearch-data:
     driver:
       local
 networks:
