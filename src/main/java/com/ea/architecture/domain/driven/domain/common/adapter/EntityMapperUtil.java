@@ -1,14 +1,17 @@
-package com.ea.architecture.domain.driven.presentation.common.adapter;
+package com.ea.architecture.domain.driven.domain.common.adapter;
 
 import com.ea.architecture.domain.driven.domain.common.model.UniqueId;
 import com.ea.architecture.domain.driven.domain.document.vo.FileSize;
 import com.ea.architecture.domain.driven.domain.document.vo.UnitOfMeasurement;
+import org.mapstruct.Named;
 
 import java.io.File;
 import java.util.stream.Stream;
 
 public interface EntityMapperUtil {
+    @Named("mapUniqueIdToLong")
     default long map(UniqueId uid) { return uid.getId();}
+    @Named("mapLongToUniqueId")
     default UniqueId map(long uid) { return new UniqueId(uid);}
 
     default FileSize map(String fileSize){

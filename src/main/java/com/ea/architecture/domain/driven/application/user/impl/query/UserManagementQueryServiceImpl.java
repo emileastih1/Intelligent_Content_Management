@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class UserManagementQueryServiceImpl implements UserManagementQueryService {
-
     UserDomainQueryServicePort userDomainQueryServicePort;
     ApplicationMapper applicationMapper;
 

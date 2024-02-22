@@ -1,6 +1,7 @@
 package com.ea.architecture.domain.driven.domain.document.model;
 
 import com.ea.architecture.domain.driven.domain.common.model.UniqueId;
+import com.ea.architecture.domain.driven.domain.document.vo.DocumentTypes;
 import com.ea.architecture.domain.driven.domain.document.vo.FileSize;
 import lombok.*;
 import org.springframework.data.domain.AbstractAggregateRoot;
@@ -16,7 +17,8 @@ import java.time.ZonedDateTime;
 @AllArgsConstructor
 public class DocumentAggregate extends AbstractAggregateRoot<DocumentAggregate> {
     private UniqueId id;
-    private String name;
+    private String documentName;
+    private DocumentTypes documentType;
     private String owner;
     private FileSize fileSize;
     private String location;

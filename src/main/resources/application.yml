@@ -23,6 +23,31 @@ spring:
         in-tests: false
       enabled: true
       file: classpath:docker/docker-compose.yml
+
+  data:
+    elasticsearch:
+      repositories:
+        enabled: true
+      cluster-name: elasticsearch
+      cluster-nodes: localhost:9200
+
+elasticsearch:
+  host: localhost                # ElasticSearch server address
+  port: 9200                          # ElasticSearch server port
+  username: elastic                   # Basic auth username
+  password: 1iywLzMrAi-YOLP8-OWW      # Basic auth password
+
+elastic:
+  index:
+    name: document
+    type: _doc
+  bulk:
+    size: 100
+  scroll:
+    timeout: 1m
+  max:
+    result: 10000
+
 spring-doc:
   swagger-ui:
     enabled: true
@@ -31,5 +56,9 @@ spring-doc:
     operations-sorter: alpha
   api-docs.path: /v3/rest-api-docs
 
-
-
+logging:
+  level:
+    org:
+      springframework:
+        web: DEBUG
+        data: DEBUG

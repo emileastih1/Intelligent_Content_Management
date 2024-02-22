@@ -1,4 +1,4 @@
-package com.ea.architecture.domain.driven.presentation;
+package com.ea.architecture.domain.driven.presentation.common.api;
 
 import com.ea.architecture.domain.driven.application.config.security.RestSecurityConfiguration;
 import com.ea.architecture.domain.driven.presentation.exception.ApiResponseUnauthorized;

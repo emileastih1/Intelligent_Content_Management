@@ -24,3 +24,9 @@ Configure pgAdmin to connect to the PostgreSQL instance:
 
 ## Swagger UI accessible at:
 [http://localhost:8085/ddd/swagger-ui/index.html](http://localhost:8085/ddd/swagger-ui/index.html)
+
+## Windows docker setup
+```bash
+wsl -d docker-desktop
+sysctl -w vm.max_map_count=262144
+sysctl vm.max_map_count
