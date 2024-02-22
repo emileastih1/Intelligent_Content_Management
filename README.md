@@ -4,6 +4,9 @@ This project employs a blend of architectural patterns, incorporating Domain-Dri
 
 ## Database Setup and Tools
 
+## Liquibase for Database Versioning
+Liquibase is used to manage database migrations and schema changes. Changesets are organized in the `src/main/resources/db/changelog` directory, allowing for structured and version-controlled database updates.
+
 ### pgAdmin (Docker container)
 
 - **Container Name:** spring-pgadmin
