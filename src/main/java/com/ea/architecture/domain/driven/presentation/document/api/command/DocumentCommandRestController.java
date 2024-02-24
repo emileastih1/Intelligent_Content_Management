@@ -1,9 +1,11 @@
 package com.ea.architecture.domain.driven.presentation.document.api.command;
 
 import com.ea.architecture.domain.driven.application.config.security.RestSecurityConfiguration;
+import com.ea.architecture.domain.driven.application.document.dto.AddDocumentDto;
 import com.ea.architecture.domain.driven.application.document.dto.DocumentDto;
 import com.ea.architecture.domain.driven.application.document.dto.DocumentResult;
 import com.ea.architecture.domain.driven.application.document.port.command.DocumentManagementCommandService;
+import com.ea.architecture.domain.driven.domain.document.model.DocumentAggregate;
 import com.ea.architecture.domain.driven.presentation.common.api.BaseRestController;
 import com.ea.architecture.domain.driven.presentation.document.mapper.DocumentPresentationMapper;
 import io.swagger.v3.oas.annotations.Operation;
@@ -44,7 +46,10 @@ public class DocumentCommandRestController extends BaseRestController {
             }
     )
     @PostMapping(value = "/v1/document", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DocumentResult> addDocument(@RequestBody @Valid DocumentDto documentDto) {
-        return new ResponseEntity<>(documentPresentationMapper.toDocumentResult(documentManagementCommandService.addDocument(documentPresentationMapper.dtoToDomain(documentDto))), HttpStatus.OK);
+    public ResponseEntity<DocumentResult> addDocument(@Valid @RequestBody AddDocumentDto documentDto) {
+        DocumentAggregate documentAggregate = documentPresentationMapper.dtoAddDocumentToDomain(documentDto);
+        String documentResult = documentManagementCommandService.addDocument(documentAggregate);
+        DocumentResult result = documentPresentationMapper.toDocumentResult(documentResult);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

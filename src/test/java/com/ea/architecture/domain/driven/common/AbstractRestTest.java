@@ -1,6 +1,7 @@
 package com.ea.architecture.domain.driven.common;
 
 import com.ea.architecture.domain.driven.presentation.common.api.BaseRestController;
+import com.ea.architecture.domain.driven.presentation.exception.BackendExceptionHandler;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -13,9 +14,11 @@ public abstract class AbstractRestTest<T extends BaseRestController> {
     protected final MockMvc mockMvc;
     private final ObjectMapper objectMapper;
 
-    public AbstractRestTest(){
+    public AbstractRestTest() {
         try (AutoCloseable autoCloseable = MockitoAnnotations.openMocks(this)) {
-            this.mockMvc = MockMvcBuilders.standaloneSetup(getController()).build();
+            this.mockMvc = MockMvcBuilders.standaloneSetup(getController())
+                    .setControllerAdvice(BackendExceptionHandler.class)
+                    .build();
             this.objectMapper = new ObjectMapper();
             this.objectMapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
         } catch (Exception e) {

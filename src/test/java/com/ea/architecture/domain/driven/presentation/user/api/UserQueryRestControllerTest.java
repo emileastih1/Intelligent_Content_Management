@@ -66,7 +66,7 @@ public class UserQueryRestControllerTest extends AbstractRestTest<UserQueryRestC
                 .andReturn();
 
         // Print the response content
-//        String jsonResponse = result.getResponse().getContentAsString();
-//        System.out.println("Response JSON: " + jsonResponse);
+        String jsonResponse = result.getResponse().getContentAsString();
+        System.out.println("Response JSON: " + jsonResponse);
     }
 }

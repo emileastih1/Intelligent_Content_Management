@@ -19,6 +19,7 @@ public class DocumentAggregate extends AbstractAggregateRoot<DocumentAggregate> 
     private UniqueId id;
     private String documentName;
     private DocumentTypes documentType;
+    private byte[] file;
     private String owner;
     private FileSize fileSize;
     private String location;
