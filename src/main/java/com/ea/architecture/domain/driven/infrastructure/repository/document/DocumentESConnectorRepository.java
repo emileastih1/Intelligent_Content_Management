@@ -1,14 +1,12 @@
 package com.ea.architecture.domain.driven.infrastructure.repository.document;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import co.elastic.clients.elasticsearch._types.Result;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch.core.*;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import com.ea.architecture.domain.driven.domain.exception.FunctionalException;
 import com.ea.architecture.domain.driven.domain.exception.MessageCode;
 import com.ea.architecture.domain.driven.infrastructure.persistance.document.model.DocumentEntity;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
@@ -34,7 +32,7 @@ public class DocumentESConnectorRepository {
     public String addDocument(DocumentEntity document) throws IOException {
         IndexRequest<DocumentEntity> request = IndexRequest.of(i ->
                 i.index(index)
-                        .id(String.valueOf(document.documentId()))
+                        //Auto increment ID by elasticsearch .id(String.valueOf(document.documentId()))
                         .document(document));
         IndexResponse response = elasticsearchClient.index(request);
 

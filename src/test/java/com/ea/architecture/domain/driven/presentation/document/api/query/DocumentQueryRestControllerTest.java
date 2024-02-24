@@ -1,4 +1,4 @@
-package com.ea.architecture.domain.driven.presentation.document.api;
+package com.ea.architecture.domain.driven.presentation.document.api.query;
 
 import com.ea.architecture.domain.driven.application.document.dto.DocumentDto;
 import com.ea.architecture.domain.driven.application.document.port.query.DocumentManagementQueryService;
@@ -17,14 +17,16 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 public class DocumentQueryRestControllerTest extends AbstractRestTest<DocumentQueryRestController> {
-
     @Mock
     DocumentManagementQueryService documentManagementQueryService;
     @Mock
     DocumentPresentationMapper documentPresentationMapper;
     @InjectMocks
     private DocumentQueryRestController documentQueryRestController;
-
+    @Override
+    protected DocumentQueryRestController getController() {
+        return documentQueryRestController;
+    }
     @Test
     void should_return_document_given_valid_id() throws Exception {
         //Given
@@ -52,7 +54,6 @@ public class DocumentQueryRestControllerTest extends AbstractRestTest<DocumentQu
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(jsonReturned));
     }
-
     //TODO finish this implementation
     void should_throw_given_invalid_id() throws Exception {
         DocumentDto document = new DocumentDto(new UniqueId(1L),
@@ -66,8 +67,5 @@ public class DocumentQueryRestControllerTest extends AbstractRestTest<DocumentQu
 
     }
 
-    @Override
-    protected DocumentQueryRestController getController() {
-        return documentQueryRestController;
-    }
+
 }

@@ -1,14 +1,12 @@
 package com.ea.architecture.domain.driven.infrastructure.persistance.document.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.Data;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.DateFormat;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
-//@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Document(indexName = "document")
 public record DocumentEntity(
         long documentId,
