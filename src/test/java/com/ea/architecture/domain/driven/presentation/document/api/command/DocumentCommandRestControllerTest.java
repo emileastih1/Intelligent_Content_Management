@@ -145,8 +145,7 @@ class DocumentCommandRestControllerTest extends AbstractRestTest<DocumentCommand
                     .andExpect(MockMvcResultMatchers.jsonPath("$.title").value(ErrorMessageConstants.ERROR_ARGUMENT_NOT_VALID_EXCEPTION))
                     .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value(ErrorMessageConstants.ERROR_CODE_ARGUMENT_NOT_VALID_EXCEPTION))
                     .andExpect(MockMvcResultMatchers.jsonPath("$.status").value(400))
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.detail").value("fileType: Document type is mandatory "))
-                    .andReturn();
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.detail").value("fileType: Document type is mandatory "));
 
         }
     }

@@ -5,8 +5,10 @@ import com.ea.architecture.domain.driven.application.document.port.query.Documen
 import com.ea.architecture.domain.driven.common.AbstractRestTest;
 import com.ea.architecture.domain.driven.domain.common.model.UniqueId;
 import com.ea.architecture.domain.driven.domain.document.model.DocumentAggregate;
-import com.ea.architecture.domain.driven.presentation.document.api.query.DocumentQueryRestController;
 import com.ea.architecture.domain.driven.presentation.document.mapper.DocumentPresentationMapper;
+import com.ea.architecture.domain.driven.presentation.exception.ErrorMessageConstants;
+import org.hamcrest.Matchers;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -23,11 +25,14 @@ public class DocumentQueryRestControllerTest extends AbstractRestTest<DocumentQu
     DocumentPresentationMapper documentPresentationMapper;
     @InjectMocks
     private DocumentQueryRestController documentQueryRestController;
+
     @Override
     protected DocumentQueryRestController getController() {
         return documentQueryRestController;
     }
+
     @Test
+    @DisplayName("Should return document given valid id")
     void should_return_document_given_valid_id() throws Exception {
         //Given
         DocumentDto document = new DocumentDto(new UniqueId(1L),
@@ -54,18 +59,20 @@ public class DocumentQueryRestControllerTest extends AbstractRestTest<DocumentQu
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(jsonReturned));
     }
-    //TODO finish this implementation
+
+    @Test
+    @DisplayName("Should throw given invalid id")
     void should_throw_given_invalid_id() throws Exception {
-        DocumentDto document = new DocumentDto(new UniqueId(1L),
-                "Legal Document", "98785", "25 MB", "/home/documents");
 
         mockMvc.perform(MockMvcRequestBuilders.
-                        get("/api/v1/document/1")
+                        get("/api/v1/document/test")
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.title").value(ErrorMessageConstants.ERROR_ARGUMENT_TYPE_MISMATCH))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value(ErrorMessageConstants.ERROR_CODE_ARGUMENT_TYPE_MISMATCH))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value(400))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.detail").value(Matchers.startsWith("Failed to convert value of type 'java.lang.String' to required type 'java.lang.Long'")));
 
     }
-
-
 }

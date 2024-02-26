@@ -14,6 +14,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 /**
  * Exception handler for the backend.
@@ -91,6 +92,28 @@ public class BackendExceptionHandler {
             allErrorMessages.append(fieldName).append(": ").append(errorMessage).append(" ");
         });
         ApiErrorDto apiErrorDto = new ApiErrorDto(ErrorMessageConstants.ERROR_ARGUMENT_NOT_VALID_EXCEPTION, ErrorMessageConstants.ERROR_CODE_ARGUMENT_NOT_VALID_EXCEPTION, HttpStatus.BAD_REQUEST.value(), allErrorMessages.toString());
+        LOGGER.error("Validation error: {}", apiErrorDto);
+        return apiErrorDto;
+    }
+
+    /**
+     * Handles MethodArgumentTypeMismatchException thrown when a request fails because of invalid arguments type
+     *
+     * @param ex The MethodArgumentTypeMismatchException
+     * @return The ApiErrorDto
+     */
+    @ExceptionHandler(value = MethodArgumentTypeMismatchException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ApiResponse(
+            responseCode = "400",
+            description = ErrorMessageConstants.ERROR_ARGUMENT_TYPE_MISMATCH,
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ApiErrorDto.class)
+            )
+    )
+    public ApiErrorDto handleMethodArgumentTypeMismatchException (MethodArgumentTypeMismatchException ex) {
+        ApiErrorDto apiErrorDto = new ApiErrorDto(ErrorMessageConstants.ERROR_ARGUMENT_TYPE_MISMATCH, ErrorMessageConstants.ERROR_CODE_ARGUMENT_TYPE_MISMATCH, HttpStatus.BAD_REQUEST.value(), ex.getMessage());
         LOGGER.error("Validation error: {}", apiErrorDto);
         return apiErrorDto;
     }

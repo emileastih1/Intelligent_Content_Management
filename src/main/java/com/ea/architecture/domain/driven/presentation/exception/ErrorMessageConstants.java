@@ -15,4 +15,6 @@ public class ErrorMessageConstants {
     public static final String FUNCTIONAL_ERROR = "Request failed for a functional reason, see details";
 
     public static final String ERROR_ARGUMENT_NOT_VALID_EXCEPTION = "Request failed, the request is made with invalid arguments";
+    public static final String ERROR_ARGUMENT_TYPE_MISMATCH = "Request failed, the request is made with invalid arguments";
+    public static final String ERROR_CODE_ARGUMENT_TYPE_MISMATCH = "ARGUMENT_TYPE_MISMATCH";
 }
