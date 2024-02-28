@@ -9,6 +9,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UniqueId {
-    private String id;
+public class UniqueUserId {
+    private Long id;
 }

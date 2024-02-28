@@ -6,6 +6,9 @@ server:
 spring:
   application:
     name: spring-domain-driver-design
+  threads:
+    virtual:
+      enabled: true
 
   jpa:
     hibernate:
@@ -36,6 +39,10 @@ elasticsearch:
   port: 9200                          # ElasticSearch server port
   username: elastic                   # Basic auth username
   password: 1iywLzMrAi-YOLP8-OWW      # Basic auth password
+
+document:
+  extraction:
+    engine: tika
 
 elastic:
   index:

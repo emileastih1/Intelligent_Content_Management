@@ -9,13 +9,13 @@ import org.mapstruct.NullValueCheckStrategy;
 
 @Mapper(componentModel = "spring")
 public interface DocumentInfrastructureMapper extends EntityMapperUtil {
-    @Mapping(target = "documentId", source = "id", qualifiedByName = "mapUniqueIdToLong", nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
     @Mapping(target = "documentType", source = "documentType", qualifiedByName = "mapDocumentTypeToString")
     @Mapping(target = "creationDate", source = "creationDate", qualifiedByName = "mapZonedDateTimeToString")
+    @Mapping(target = "documentId", source = "id" , qualifiedByName = "mapUniqueIdToString")
     DocumentEntity domainToEntity(DocumentAggregate documentAggregate);
-    @Mapping(target = "id", source = "documentId", qualifiedByName = "mapLongToUniqueId")
     @Mapping(target = "documentType", source = "documentType", qualifiedByName = "mapStringToDocumentType")
     @Mapping(target = "creationDate", source = "creationDate", qualifiedByName = "mapStringToZonedDateTime")
+    @Mapping(target = "id", source = "documentId" , qualifiedByName = "mapStringToUniqueId")
     DocumentAggregate entityToDomain(DocumentEntity documentEntity);
 
 }

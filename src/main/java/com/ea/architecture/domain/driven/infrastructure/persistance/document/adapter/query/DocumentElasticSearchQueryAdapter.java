@@ -1,7 +1,7 @@
 package com.ea.architecture.domain.driven.infrastructure.persistance.document.adapter.query;
 
 import com.ea.architecture.domain.driven.domain.document.model.DocumentAggregate;
-import com.ea.architecture.domain.driven.domain.document.repository.DocumentDomainQueryServicePort;
+import com.ea.architecture.domain.driven.domain.document.repository.query.DocumentDomainQueryServicePort;
 import com.ea.architecture.domain.driven.domain.exception.FunctionalException;
 import com.ea.architecture.domain.driven.domain.exception.MessageCode;
 import com.ea.architecture.domain.driven.infrastructure.persistance.document.adapter.DocumentInfrastructureMapper;
@@ -27,11 +27,11 @@ public class DocumentElasticSearchQueryAdapter implements DocumentDomainQuerySer
     }
 
     @Override
-    public DocumentAggregate retrieveDocumentById(Long documentId) {
+    public DocumentAggregate retrieveDocumentById(String documentId) {
         DocumentEntity documentEntity = null;
         try {
             documentEntity = documentESConnectorRepository
-                    .getDocumentById(String.valueOf(documentId));
+                    .getDocumentById(documentId);
         } catch (IOException e) {
             LOGGER.error("Error while retrieving document by ID: "+e.getMessage());
             throw new FunctionalException(MessageCode.DOCUMENT_NOT_FOUND, "Document not found: "+e.getMessage());

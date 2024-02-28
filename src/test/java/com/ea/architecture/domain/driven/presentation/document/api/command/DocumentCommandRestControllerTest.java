@@ -1,11 +1,12 @@
 package com.ea.architecture.domain.driven.presentation.document.api.command;
 
 import com.ea.architecture.domain.driven.application.document.dto.AddDocumentDto;
-import com.ea.architecture.domain.driven.application.document.dto.DocumentResult;
+import com.ea.architecture.domain.driven.domain.document.entity.DocumentResult;
 import com.ea.architecture.domain.driven.application.document.port.command.DocumentManagementCommandService;
 import com.ea.architecture.domain.driven.common.AbstractRestTest;
 import com.ea.architecture.domain.driven.domain.common.model.UniqueId;
 import com.ea.architecture.domain.driven.domain.document.model.DocumentAggregate;
+import com.ea.architecture.domain.driven.domain.document.vo.DocumentStatus;
 import com.ea.architecture.domain.driven.domain.document.vo.DocumentTypes;
 import com.ea.architecture.domain.driven.domain.document.vo.FileSize;
 import com.ea.architecture.domain.driven.domain.document.vo.UnitOfMeasurement;
@@ -47,10 +48,9 @@ class DocumentCommandRestControllerTest extends AbstractRestTest<DocumentCommand
             AddDocumentDto addDocumentDto = new AddDocumentDto("TestDocument" , "base64File", "15 MB", "JPG");
 
             //Returned mocks
-            String elasticResult = "Document with id 1 added successfully!";
-            DocumentResult documentResult = new DocumentResult(0L,"","","","", elasticResult);
+            DocumentResult documentResult = new DocumentResult("123","","","","", DocumentStatus.CREATED.name());
             DocumentAggregate documentAggregate = DocumentAggregate.builder()
-                    .id(new UniqueId(0L))
+                    .id(new UniqueId("123"))
                     .documentName("TestDocument")
                     .documentType(DocumentTypes.JPG)
                     .fileSize(new FileSize("15", UnitOfMeasurement.MB))
@@ -58,12 +58,11 @@ class DocumentCommandRestControllerTest extends AbstractRestTest<DocumentCommand
                     .build();
             //When
             Mockito.doReturn(documentAggregate).when(documentPresentationMapper).dtoAddDocumentToDomain(addDocumentDto);
-            Mockito.doReturn(elasticResult).when(documentManagementCommandService).addDocument(documentAggregate);
-            Mockito.doReturn(documentResult).when(documentPresentationMapper).toDocumentResult(elasticResult);
+            Mockito.doReturn(documentResult).when(documentManagementCommandService).addOrUpdateDocument(documentAggregate);
 
             //Then
             String jsonRequest = getObjectAsJsonContent(addDocumentDto);
-            String jsonResult = getObjectAsJsonContent(documentPresentationMapper.toDocumentResult(elasticResult));
+            String jsonResult = getObjectAsJsonContent(documentResult);
 
             MvcResult result = mockMvc.perform(MockMvcRequestBuilders
                             .post("/api/v1/document")
