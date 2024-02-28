@@ -19,11 +19,11 @@ public interface QueryBuilderUtils {
 
     public static List<Query> prepareQueryList(DocumentEntity document) {
         Map<String, String> conditionMap = new HashMap<>();
-        conditionMap.put("documentName.keyword", document.documentName());
-        conditionMap.put("documentType.keyword", document.documentType());
-        conditionMap.put("documentMetadata.keyword", document.documentMetadata());
-        conditionMap.put("documentContent.keyword", document.documentContent());
-        conditionMap.put("documentCreationDate.keyword", document.creationDate());
+        conditionMap.put("documentName.keyword", document.getDocumentName());
+        conditionMap.put("documentType.keyword", document.getDocumentType());
+        conditionMap.put("documentMetadata.keyword", document.getDocumentMetadata());
+        conditionMap.put("documentContent.keyword", document.getDocumentContent());
+        conditionMap.put("documentCreationDate.keyword", document.getCreationDate());
 
         return conditionMap.entrySet().stream()
                 .filter(entry->!ObjectUtils.isEmpty(entry.getValue()))

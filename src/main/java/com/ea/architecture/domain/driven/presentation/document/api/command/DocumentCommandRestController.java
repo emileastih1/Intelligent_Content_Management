@@ -3,7 +3,7 @@ package com.ea.architecture.domain.driven.presentation.document.api.command;
 import com.ea.architecture.domain.driven.application.config.security.RestSecurityConfiguration;
 import com.ea.architecture.domain.driven.application.document.dto.AddDocumentDto;
 import com.ea.architecture.domain.driven.application.document.dto.DocumentDto;
-import com.ea.architecture.domain.driven.application.document.dto.DocumentResult;
+import com.ea.architecture.domain.driven.domain.document.entity.DocumentResult;
 import com.ea.architecture.domain.driven.application.document.port.command.DocumentManagementCommandService;
 import com.ea.architecture.domain.driven.domain.document.model.DocumentAggregate;
 import com.ea.architecture.domain.driven.presentation.common.api.BaseRestController;
@@ -46,10 +46,27 @@ public class DocumentCommandRestController extends BaseRestController {
             }
     )
     @PostMapping(value = "/v1/document", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DocumentResult> addDocument(@Valid @RequestBody AddDocumentDto documentDto) {
+    public ResponseEntity<DocumentResult> addOrUpdateDocument(@Valid @RequestBody AddDocumentDto documentDto) {
         DocumentAggregate documentAggregate = documentPresentationMapper.dtoAddDocumentToDomain(documentDto);
-        String documentResult = documentManagementCommandService.addDocument(documentAggregate);
-        DocumentResult result = documentPresentationMapper.toDocumentResult(documentResult);
+        DocumentResult result = documentManagementCommandService.addOrUpdateDocument(documentAggregate);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+/*    @Operation(
+            summary = "Upload document",
+            description = "Upload document",
+            security = {@SecurityRequirement(name = RestSecurityConfiguration.BASIC_AUTH, scopes = {RestSecurityConfiguration.PERM_WRITE})},
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "ok", content = @Content(
+                            schema = @Schema(implementation = DocumentDto.class)
+                    ))
+            }
+    )
+    @PutMapping(value = "/v1/document", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<DocumentResult> uploadDocument(@Valid @RequestBody AddDocumentDto documentDto) {
+        DocumentAggregate documentAggregate = documentPresentationMapper.dtoAddDocumentToDomain(documentDto);
+        String documentResult = documentManagementCommandService.uploadDocument(documentAggregate);
+        DocumentResult result = documentPresentationMapper.toDocumentResult(documentResult);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }*/
 }

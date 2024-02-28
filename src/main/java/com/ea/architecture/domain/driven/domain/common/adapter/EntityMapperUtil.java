@@ -4,6 +4,7 @@ import com.ea.architecture.domain.driven.domain.common.model.UniqueId;
 import com.ea.architecture.domain.driven.domain.document.vo.DocumentTypes;
 import com.ea.architecture.domain.driven.domain.document.vo.FileSize;
 import com.ea.architecture.domain.driven.domain.document.vo.UnitOfMeasurement;
+import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.Named;
 
 import java.io.File;
@@ -11,12 +12,12 @@ import java.time.ZonedDateTime;
 import java.util.Base64;
 
 public interface EntityMapperUtil {
-    @Named("mapUniqueIdToLong")
-    default long map(UniqueId uid) {
-        return uid.getId();
+    @Named("mapUniqueIdToString")
+    default String mapUniqueIdToString(UniqueId uid) {
+        return uid != null ? String.valueOf(uid.getId()) : StringUtils.EMPTY;
     }
-    @Named("mapLongToUniqueId")
-    default UniqueId map(long uid) {
+    @Named("mapStringToUniqueId")
+    default UniqueId mapStringToUniqueId(String uid) {
         return new UniqueId(uid);
     }
     @Named("mapStringToFileSize")

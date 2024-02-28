@@ -2,7 +2,7 @@ package com.ea.architecture.domain.driven.application.document.port.query.impl;
 
 import com.ea.architecture.domain.driven.application.document.port.query.DocumentManagementQueryService;
 import com.ea.architecture.domain.driven.domain.document.model.DocumentAggregate;
-import com.ea.architecture.domain.driven.domain.document.repository.DocumentDomainQueryServicePort;
+import com.ea.architecture.domain.driven.domain.document.repository.query.DocumentDomainQueryServicePort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -12,7 +12,7 @@ public class DocumentManagementQueryServiceImpl implements DocumentManagementQue
         this.documentDomainQueryServicePort = documentDomainQueryServicePort;
     }
     @Override
-    public DocumentAggregate findDocumentById(Long id) {
+    public DocumentAggregate findDocumentById(String id) {
         return documentDomainQueryServicePort.retrieveDocumentById(id);
     }
     @Override

@@ -4,6 +4,7 @@ import com.ea.architecture.domain.driven.application.user.dto.UserDto;
 import com.ea.architecture.domain.driven.application.user.port.query.UserManagementQueryService;
 import com.ea.architecture.domain.driven.common.AbstractRestTest;
 import com.ea.architecture.domain.driven.domain.common.model.UniqueId;
+import com.ea.architecture.domain.driven.domain.common.model.UniqueUserId;
 import com.ea.architecture.domain.driven.domain.user.model.UserAggregate;
 import com.ea.architecture.domain.driven.presentation.user.mapper.UserPresentationMapper;
 import org.junit.jupiter.api.Test;
@@ -37,10 +38,10 @@ public class UserQueryRestControllerTest extends AbstractRestTest<UserQueryRestC
         //Given
         UserDto inputDto = new UserDto(1L, "", "", "", null);
         UserAggregate userAggregateInput = new UserAggregate();
-        userAggregateInput.setId(new UniqueId(inputDto.id()));
+        userAggregateInput.setId(new UniqueUserId(inputDto.id()));
 
         //Returned mocks
-        UserAggregate userAggregateReturned = new UserAggregate(new UniqueId(inputDto.id()), "Emile", "Astih", "33", null);
+        UserAggregate userAggregateReturned = new UserAggregate(new UniqueUserId(inputDto.id()), "Emile", "Astih", "33", null);
         UserDto dtoReturned = new UserDto(1L, "Emile", "Astih", "33", null);
 
         //When
@@ -51,7 +52,6 @@ public class UserQueryRestControllerTest extends AbstractRestTest<UserQueryRestC
         //Then
         String jsonRequest = getObjectAsJsonContent(inputDto);
         String jsonResult = getObjectAsJsonContent(dtoReturned);
-
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders
                         .post("/api/v1/person/search")

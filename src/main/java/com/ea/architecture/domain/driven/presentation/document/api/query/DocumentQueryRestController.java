@@ -45,7 +45,7 @@ public class DocumentQueryRestController extends BaseRestController {
             }
     )
     @GetMapping(value = "/v1/document/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DocumentDto> findDocument(@PathVariable Long id) throws Exception {
+    public ResponseEntity<DocumentDto> findDocument(@PathVariable String id) throws Exception {
         return new ResponseEntity<>((documentPresentationMapper.domainToDto(documentManagementQueryService.findDocumentById(id))), HttpStatus.OK);
     }
 
