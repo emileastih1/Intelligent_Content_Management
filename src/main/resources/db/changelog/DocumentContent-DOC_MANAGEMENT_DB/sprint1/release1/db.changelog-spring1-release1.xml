@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <!-- Change Set for Creating USERS Table -->
+    <changeSet id="create-table-users" author="eas" failOnError="true">
+        <comment>create table to store users information</comment>
+        <sqlFile
+                path="db/changelog/DocumentContent-DOC_MANAGEMENT_DB/sprint1/release1/model/USERS-create.sql"
+                splitStatements="true"
+                stripComments="true"
+        />
+    </changeSet>
+
+    <!-- Change Set for Creating ADDRESS Table -->
+    <changeSet id="create-table-address" author="liquibase-demo-service">
+        <comment>create table address that is linked to users by a one to one relation</comment>
+        <sqlFile
+                path="db/changelog/DocumentContent-DOC_MANAGEMENT_DB/sprint1/release1/model/ADDRESS-create.sql"
+                splitStatements="true"
+                stripComments="true"
+        />
+    </changeSet>
+
+    <!-- Change Set for Creating DOCUMENT Table -->
+    <changeSet id="create-table-document" author="eas">
+        <comment>create table document that is linked to users by a one to one relation</comment>
+        <sqlFile
+                path="db/changelog/DocumentContent-DOC_MANAGEMENT_DB/sprint1/release1/model/DOCUMENT-create.sql"
+                splitStatements="true"
+                stripComments="true"
+        />
+    </changeSet>
+
+    <changeSet id="update-table-users" author="eas" failOnError="true">
+        <comment>update table users to add auto-increment primary key</comment>
+        <sqlFile
+                path="db/changelog/DocumentContent-DOC_MANAGEMENT_DB/sprint1/release1/model/USERS-update_primary_key.sql"
+                splitStatements="true"
+                stripComments="true"
+        />
+    </changeSet>
+
+    <changeSet id="insert-sample-data-table-users" author="eas" failOnError="true">
+        <comment>insert sample data into users</comment>
+        <sqlFile
+                path="db/changelog/DocumentContent-DOC_MANAGEMENT_DB/sprint1/release1/data/USERS-ADD-SAMPLE-DATA.sql"
+                splitStatements="true"
+                stripComments="true"
+                encoding="UTF-8"
+        />
+    </changeSet>
+
+    <changeSet id="insert-sample-data-table-address" author="eas" failOnError="true">
+        <comment>insert sample data into address</comment>
+        <sqlFile
+                path="db/changelog/DocumentContent-DOC_MANAGEMENT_DB/sprint1/release1/data/ADDRESS-ADD-SAMPLE-DATA.sql"
+                splitStatements="true"
+                stripComments="true"
+                encoding="UTF-8"
+        />
+    </changeSet>
+
+</databaseChangeLog>

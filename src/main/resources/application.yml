@@ -18,7 +18,8 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
   liquibase:
-    change-log: classpath:db/changelog/schema-DEMO_DB/changeLog-master.xml
+    change-log: classpath:db/changelog/DocumentContent-DOC_MANAGEMENT_DB/changeLog-master.xml
+    default-schema: documentcontent
 
   docker:
     compose:
