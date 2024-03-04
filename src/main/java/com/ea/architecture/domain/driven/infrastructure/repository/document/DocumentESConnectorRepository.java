@@ -8,7 +8,7 @@ import com.ea.architecture.domain.driven.domain.document.entity.DocumentResult;
 import com.ea.architecture.domain.driven.domain.document.vo.DocumentStatus;
 import com.ea.architecture.domain.driven.domain.exception.FunctionalException;
 import com.ea.architecture.domain.driven.domain.exception.MessageCode;
-import com.ea.architecture.domain.driven.infrastructure.persistance.document.model.DocumentEntity;
+import com.ea.architecture.domain.driven.infrastructure.persistance.document.model.DocumentElasticEntity;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,8 +35,8 @@ public class DocumentESConnectorRepository {
         this.elasticsearchClient = elasticsearchClient;
     }
 
-    public DocumentResult addOrUpdateDocument(DocumentEntity document) throws IOException {
-        IndexRequest<DocumentEntity> request = IndexRequest.of(i ->
+    public DocumentResult addOrUpdateDocument(DocumentElasticEntity document) throws IOException {
+        IndexRequest<DocumentElasticEntity> request = IndexRequest.of(i ->
                 i.index(index)
                         .document(document));
         IndexResponse response = elasticsearchClient.index(request);
@@ -51,11 +51,11 @@ public class DocumentESConnectorRepository {
                 yield new DocumentResult(response.id(), DocumentStatus.UPDATED.name());
             }
             case NotFound -> {
-                LOGGER.error("Document " +document.getDocumentId() +" - "+ document.getDocumentName()  + " not found!");
+                LOGGER.error("Document " + document.getDocumentId() + " - " + document.getDocumentName() + " not found!");
                 yield new DocumentResult(StringUtils.EMPTY, DocumentStatus.NOT_FOUND.name());
             }
             case NoOp -> {
-                LOGGER.debug("No operation performed on document " +document.getDocumentId() +" - "+ document.getDocumentName()  + " !");
+                LOGGER.debug("No operation performed on document " + document.getDocumentId() + " - " + document.getDocumentName() + " !");
                 yield new DocumentResult(StringUtils.EMPTY, DocumentStatus.NO_OPERATION.name());
             }
             case Deleted -> {
@@ -65,7 +65,7 @@ public class DocumentESConnectorRepository {
         };
     }
 
-    public boolean bulkInsertDocuments(List<DocumentEntity> documentList) throws IOException {
+    public boolean bulkInsertDocuments(List<DocumentElasticEntity> documentList) throws IOException {
         BulkRequest.Builder builder = new BulkRequest.Builder();
         documentList.stream().forEach(document ->
                 builder.operations(op ->
@@ -78,42 +78,42 @@ public class DocumentESConnectorRepository {
         return !bulkResponse.errors();
     }
 
-    public DocumentEntity getDocumentById(String id) throws FunctionalException, IOException {
-        GetResponse<DocumentEntity> response = elasticsearchClient.get(req ->
+    public DocumentElasticEntity getDocumentById(String id) throws FunctionalException, IOException {
+        GetResponse<DocumentElasticEntity> response = elasticsearchClient.get(req ->
                 req.index(index)
-                        .id(id), DocumentEntity.class);
+                        .id(id), DocumentElasticEntity.class);
         if (!response.found())
             throw new FunctionalException(MessageCode.DOCUMENT_NOT_FOUND, "Document with ID " + id + " not found!");
 
-        DocumentEntity source = response.source();
+        DocumentElasticEntity source = response.source();
         assert source != null;
         source.setElasticId(response.id());
         return source;
     }
 
-    public List<DocumentEntity> getDocumentsWithMustQuery(DocumentEntity document) throws IOException {
+    public List<DocumentElasticEntity> getDocumentsWithMustQuery(DocumentElasticEntity document) throws IOException {
         List<Query> queries = prepareQueryList(document);
-        SearchResponse<DocumentEntity> documentSearchResponse = elasticsearchClient.search(req ->
+        SearchResponse<DocumentElasticEntity> documentSearchResponse = elasticsearchClient.search(req ->
                         req.index(index)
                                 .size(100)
                                 .query(query ->
                                         query.bool(bool ->
                                                 bool.must(queries))),
-                DocumentEntity.class);
+                DocumentElasticEntity.class);
 
         return documentSearchResponse.hits().hits().stream()
                 .map(Hit::source).collect(Collectors.toList());
     }
 
-    public List<DocumentEntity> getDocumentsWithShouldQuery(DocumentEntity document) throws IOException {
+    public List<DocumentElasticEntity> getDocumentsWithShouldQuery(DocumentElasticEntity document) throws IOException {
         List<Query> queries = prepareQueryList(document);
-        SearchResponse<DocumentEntity> documentSearchResponse = elasticsearchClient.search(req ->
+        SearchResponse<DocumentElasticEntity> documentSearchResponse = elasticsearchClient.search(req ->
                         req.index(index)
                                 .size(100)
                                 .query(query ->
                                         query.bool(bool ->
                                                 bool.should(queries))),
-                DocumentEntity.class);
+                DocumentElasticEntity.class);
 
         return documentSearchResponse.hits().hits().stream()
                 .map(Hit::source).collect(Collectors.toList());
@@ -126,16 +126,16 @@ public class DocumentESConnectorRepository {
         return response.result().toString();
     }
 
-    public String updateDocument(DocumentEntity document) throws IOException {
-        UpdateRequest<DocumentEntity, DocumentEntity> updateRequest = UpdateRequest.of(req ->
+    public String updateDocument(DocumentElasticEntity document) throws IOException {
+        UpdateRequest<DocumentElasticEntity, DocumentElasticEntity> updateRequest = UpdateRequest.of(req ->
                 req.index(index)
                         .id(String.valueOf(document.getDocumentId()))
                         .doc(document));
-        UpdateResponse<DocumentEntity> response = elasticsearchClient.update(updateRequest, DocumentEntity.class);
+        UpdateResponse<DocumentElasticEntity> response = elasticsearchClient.update(updateRequest, DocumentElasticEntity.class);
         return response.result().toString();
     }
 
-    public String uploadDocument(DocumentEntity documentEntity) {
+    public String uploadDocument(DocumentElasticEntity documentElasticEntity) {
         return "Document uploaded successfully!";
     }
 }

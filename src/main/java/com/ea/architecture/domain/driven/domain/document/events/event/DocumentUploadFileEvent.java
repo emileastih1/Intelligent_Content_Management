@@ -2,6 +2,15 @@ package com.ea.architecture.domain.driven.domain.document.events.event;
 
 import com.ea.architecture.domain.driven.domain.document.entity.DocumentAttachment;
 import com.ea.architecture.domain.driven.domain.document.model.DocumentAggregate;
+import lombok.*;
 
-public record DocumentUploadFileEvent(DocumentAggregate aggregate, DocumentAttachment documentAttachment)
-{}
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode
+public final class DocumentUploadFileEvent {
+    private DocumentAggregate aggregate;
+    private DocumentAttachment documentAttachment;
+
+}

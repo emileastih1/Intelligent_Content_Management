@@ -1,16 +1,18 @@
 package com.ea.architecture.domain.driven.domain.document.model;
 
-import com.ea.architecture.domain.driven.domain.common.model.UniqueId;
 import com.ea.architecture.domain.driven.domain.document.entity.DocumentAttachment;
-import com.ea.architecture.domain.driven.domain.document.entity.DocumentResult;
 import com.ea.architecture.domain.driven.domain.document.events.event.DocumentUploadFileEvent;
 import com.ea.architecture.domain.driven.domain.document.vo.DocumentStatus;
 import com.ea.architecture.domain.driven.domain.document.vo.DocumentTypes;
 import com.ea.architecture.domain.driven.domain.document.vo.FileSize;
+import com.ea.architecture.domain.driven.domain.document.vo.FileSizeConverter;
+import jakarta.persistence.*;
 import lombok.*;
-import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.springframework.data.domain.AbstractAggregateRoot;
 import org.springframework.util.Assert;
 
+import java.sql.Types;
 import java.time.ZonedDateTime;
 
 /**
@@ -21,49 +23,55 @@ import java.time.ZonedDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class DocumentAggregate {
-    private UniqueId id;
-    private String elasticId;
+@Entity
+@Table(name = "document")
+public class DocumentAggregate extends AbstractAggregateRoot<DocumentAggregate> {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+
+    @Column(name = "NAME", nullable = false, length = 200)
     private String documentName;
+
+    @Transient
     private DocumentTypes documentType;
+
+    @Lob
+    @JdbcTypeCode(Types.VARBINARY)
+    @Column(name = "CONTENT")
     private byte[] file;
+
+    @Transient
     private String owner;
+
+    @Column(name = "FILE_SIZE")
+    @Convert(converter = FileSizeConverter.class)
     private FileSize fileSize;
+
+    @Transient
     private String location;
+
+    @Column(name = "CREATION_DATE")
     private ZonedDateTime creationDate;
+
+    @Column(name = "MODIFICATION_DATE")
     private ZonedDateTime modificationDate;
+
+    @Transient
     private DocumentStatus documentStatus;
 
-    public DocumentUploadFileEvent attachDocument(DocumentUploadCommand documentUploadCommand) {
-        Assert.notNull(documentUploadCommand.elasticId(), "Document Id cannot be null");
-        Assert.notNull(documentUploadCommand.file(), "File cannot be null");
+    public void indexDocument(DocumentIndexCommand documentIndexCommand) {
+        Assert.notNull(documentIndexCommand.file(), "File cannot be null");
+        Assert.notNull(documentIndexCommand.documentName(), "Document name cannot be null");
+        Assert.notNull(documentIndexCommand.documentType(), "Document Type be null");
 
-        String documentId = documentUploadCommand.documentId() != null ?
-                documentUploadCommand.documentId().getId() : StringUtils.EMPTY;
         DocumentAttachment documentAttachment = new DocumentAttachment(
-                documentId,
-                documentUploadCommand.documentName(),
-                documentUploadCommand.documentType(),
+                0L,
+                documentIndexCommand.documentName(),
+                documentIndexCommand.documentType(),
                 null,
-                documentUploadCommand.file());
-        return new DocumentUploadFileEvent(this, documentAttachment);
-    }
-
-    public void updateState(DocumentResult documentResult) {
-        switch (DocumentStatus.valueOf(documentResult.status())) {
-            case CREATED:
-                this.documentStatus = DocumentStatus.CREATED;
-                this.elasticId = documentResult.id();
-                break;
-            case UPDATED:
-                this.documentStatus = DocumentStatus.UPDATED;
-                break;
-            case DELETED:
-                this.documentStatus = DocumentStatus.DELETED;
-                break;
-            case NOT_FOUND:
-                this.documentStatus = DocumentStatus.NOT_FOUND;
-                break;
-        }
+                documentIndexCommand.file());
+        DocumentUploadFileEvent documentUploadFileEvent = new DocumentUploadFileEvent(this, documentAttachment);
+        this.registerEvent(documentUploadFileEvent);
     }
 }

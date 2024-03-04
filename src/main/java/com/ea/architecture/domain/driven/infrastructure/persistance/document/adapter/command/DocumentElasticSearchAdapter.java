@@ -14,12 +14,12 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 
 @Service
-public class DocumentElasticSearchElasticAdapter implements DocumentDomainElasticServicePort {
-    public static final Logger LOGGER = LoggerFactory.getLogger(DocumentElasticSearchElasticAdapter.class);
+public class DocumentElasticSearchAdapter implements DocumentDomainElasticServicePort {
+    public static final Logger LOGGER = LoggerFactory.getLogger(DocumentElasticSearchAdapter.class);
     DocumentESConnectorRepository documentESConnectorRepository;
     DocumentInfrastructureMapper documentInfrastructureMapper;
 
-    public DocumentElasticSearchElasticAdapter(DocumentESConnectorRepository documentESConnectorRepository, DocumentInfrastructureMapper documentInfrastructureMapper) {
+    public DocumentElasticSearchAdapter(DocumentESConnectorRepository documentESConnectorRepository, DocumentInfrastructureMapper documentInfrastructureMapper) {
         this.documentESConnectorRepository = documentESConnectorRepository;
         this.documentInfrastructureMapper = documentInfrastructureMapper;
     }
@@ -30,8 +30,8 @@ public class DocumentElasticSearchElasticAdapter implements DocumentDomainElasti
         try {
             documentResult = documentESConnectorRepository.addOrUpdateDocument(documentInfrastructureMapper.domainToEntity(document));
         } catch (IOException e) {
-            LOGGER.error("Error while adding document: "+e.getMessage());
-            throw new FunctionalException(MessageCode.DOCUMENT_CANNOT_BE_ADDED , "Document cannot be added: "+e.getMessage());
+            LOGGER.error("Error while adding document: " + e.getMessage());
+            throw new FunctionalException(MessageCode.DOCUMENT_CANNOT_BE_ADDED, "Document cannot be added: " + e.getMessage());
         }
         return documentResult;
     }

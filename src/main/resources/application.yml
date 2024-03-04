@@ -16,6 +16,8 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+      default_schema: documentcontent
+    show-sql: true
 
   liquibase:
     change-log: classpath:db/changelog/DocumentContent-DOC_MANAGEMENT_DB/changeLog-master.xml

@@ -3,11 +3,8 @@ package com.ea.architecture.domain.driven.presentation.document.api.query;
 import com.ea.architecture.domain.driven.application.document.dto.DocumentDto;
 import com.ea.architecture.domain.driven.application.document.port.query.DocumentManagementQueryService;
 import com.ea.architecture.domain.driven.common.AbstractRestTest;
-import com.ea.architecture.domain.driven.domain.common.model.UniqueId;
 import com.ea.architecture.domain.driven.domain.document.model.DocumentAggregate;
 import com.ea.architecture.domain.driven.presentation.document.mapper.DocumentPresentationMapper;
-import com.ea.architecture.domain.driven.presentation.exception.ErrorMessageConstants;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -35,11 +32,11 @@ public class DocumentQueryRestControllerTest extends AbstractRestTest<DocumentQu
     @DisplayName("Should return document given valid id")
     void should_return_document_given_valid_id() throws Exception {
         //Given
-        DocumentDto document = new DocumentDto(new UniqueId("1"),"1212121212",
+        DocumentDto document = new DocumentDto(1L, "1212121212",
                 "Legal Document", "98785", "25 MB", "/home/documents");
 
         DocumentAggregate documentAggregate = DocumentAggregate.builder()
-                .id(new UniqueId("1"))
+                .id(1L)
                 .documentName("Legal Document")
                 .owner("98785")
                 .location("/home/documents")

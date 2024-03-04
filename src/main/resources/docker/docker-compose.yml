@@ -1,20 +1,22 @@
 version: '3.8'
 services:
-  db-test:
+  db:
     image: postgres:15.5-alpine3.18
     ports:
       - '5434:5432'
     volumes:
-      - db-test:/var/lib/postgresql/data
+      - db:/var/lib/postgresql/data
       - ./db-postgres/docker_postgres_initialisation.sh:/docker-entrypoint-initdb.d/docker_create_multiple_databases_and_users.sh
     environment:
-      - POSTGRES_MULTIPLE_DATABASES=doc_management_db,doc_management_user,documentcontent| vector_db,vector_user,vectorcontent
+      - POSTGRES_MULTIPLE_DATABASES=doc_management_db,doc_management_user,documentcontent
       - POSTGRES_PASSWORD=toor
+      - POSTGRES_DB=doc_management_db
+      - POSTGRES_USER=postgres
     networks:
       backend:
         aliases:
           - "database-test"
-    container_name: spring-postgresql-test
+    container_name: spring-postgresql-db
   pgadmin:
     image: dpage/pgadmin4:8.0
     ports:
@@ -49,9 +51,6 @@ services:
     container_name: elasticsearch01
 volumes:
   db:
-    driver:
-      local
-  db-test:
     driver:
       local
   elasticsearch-data:

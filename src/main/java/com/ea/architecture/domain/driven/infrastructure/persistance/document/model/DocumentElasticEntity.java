@@ -5,13 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.DateFormat;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
-
-import java.util.Objects;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,7 +16,7 @@ import java.util.Objects;
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Document(indexName = "document")
-public final class DocumentEntity {
+public final class DocumentElasticEntity {
     private String elasticId;
     private String documentId;
     @Field(type = FieldType.Text, name = "documentName")
@@ -31,6 +28,6 @@ public final class DocumentEntity {
     private String creationDate;
     @Field(type = FieldType.Date, format = DateFormat.date_hour_minute_second_millis, name = "modificationDate")
     private String modificationDate;
-    private  String owner;
+    private String owner;
 
 }

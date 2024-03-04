@@ -64,4 +64,34 @@
         />
     </changeSet>
 
+    <changeSet id="create_vector_schema" author="eas" failOnError="true">
+        <comment>create vector db schema</comment>
+        <sqlFile
+                path="db/changelog/DocumentContent-DOC_MANAGEMENT_DB/sprint1/release1/ddl/CREATE-VECTOR-SCHEMA.sql"
+                splitStatements="true"
+                stripComments="true"
+                encoding="UTF-8"
+        />
+    </changeSet>
+
+    <changeSet id="set_search_path" author="eas" failOnError="true">
+        <comment>set search path for postgres</comment>
+        <sqlFile
+                path="db/changelog/DocumentContent-DOC_MANAGEMENT_DB/sprint1/release1/privileges/DATABASE-DDL-SEARCH-PATH.sql"
+                splitStatements="true"
+                stripComments="true"
+                encoding="UTF-8"
+        />
+    </changeSet>
+
+    <changeSet id="grant_all_privileges" author="eas" failOnError="true">
+        <comment>grant all privileges to postgres and doc_management_user</comment>
+        <sqlFile
+                path="db/changelog/DocumentContent-DOC_MANAGEMENT_DB/sprint1/release1/privileges/DATABASE-DDL-PRIVILEGES.sql"
+                splitStatements="true"
+                stripComments="true"
+                encoding="UTF-8"
+        />
+    </changeSet>
+
 </databaseChangeLog>

@@ -5,7 +5,7 @@ import com.ea.architecture.domain.driven.domain.document.repository.query.Docume
 import com.ea.architecture.domain.driven.domain.exception.FunctionalException;
 import com.ea.architecture.domain.driven.domain.exception.MessageCode;
 import com.ea.architecture.domain.driven.infrastructure.persistance.document.adapter.DocumentInfrastructureMapper;
-import com.ea.architecture.domain.driven.infrastructure.persistance.document.model.DocumentEntity;
+import com.ea.architecture.domain.driven.infrastructure.persistance.document.model.DocumentElasticEntity;
 import com.ea.architecture.domain.driven.infrastructure.repository.document.DocumentESConnectorRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,15 +28,15 @@ public class DocumentElasticSearchQueryAdapter implements DocumentDomainQuerySer
 
     @Override
     public DocumentAggregate retrieveDocumentById(String documentId) {
-        DocumentEntity documentEntity = null;
+        DocumentElasticEntity documentElasticEntity = null;
         try {
-            documentEntity = documentESConnectorRepository
+            documentElasticEntity = documentESConnectorRepository
                     .getDocumentById(documentId);
         } catch (IOException e) {
-            LOGGER.error("Error while retrieving document by ID: "+e.getMessage());
-            throw new FunctionalException(MessageCode.DOCUMENT_NOT_FOUND, "Document not found: "+e.getMessage());
+            LOGGER.error("Error while retrieving document by ID: " + e.getMessage());
+            throw new FunctionalException(MessageCode.DOCUMENT_NOT_FOUND, "Document not found: " + e.getMessage());
         }
-        return documentInfrastructureMapper.entityToDomain(documentEntity);
+        return documentInfrastructureMapper.entityToDomain(documentElasticEntity);
     }
 
     @Override

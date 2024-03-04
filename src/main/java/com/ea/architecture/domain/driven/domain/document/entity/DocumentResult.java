@@ -14,4 +14,7 @@ public record DocumentResult(String id,
         this(null, null, null, null, null, null);
     }
 
+    public DocumentResult(String documentId) {
+        this(documentId, null, null, null, null, null);
+    }
 }
