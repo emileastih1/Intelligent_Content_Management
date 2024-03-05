@@ -49,7 +49,7 @@ class DocumentCommandRestControllerTest extends AbstractRestTest<DocumentCommand
             AddDocumentDto addDocumentDto = new AddDocumentDto("TestDocument", "base64File", "15 MB", "JPG");
 
             //Returned mocks
-            DocumentResult documentResult = new DocumentResult("123", "", "", "", "", DocumentStatus.CREATED.name());
+            DocumentResult documentResult = new DocumentResult("123", "", "", "", DocumentStatus.CREATED.name());
             DocumentAggregate documentAggregate = DocumentAggregate.builder()
                     .id(123L)
                     .documentName("TestDocument")

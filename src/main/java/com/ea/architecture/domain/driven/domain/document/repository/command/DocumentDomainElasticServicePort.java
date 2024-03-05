@@ -7,7 +7,9 @@ import org.springframework.stereotype.Service;
 @Service
 public interface DocumentDomainElasticServicePort {
     DocumentResult addOrUpdateDocument(DocumentAggregate document);
+
     DocumentAggregate duplicateDocument(DocumentAggregate document);
+
     DocumentAggregate deleteDocument(DocumentAggregate document);
 
 }
