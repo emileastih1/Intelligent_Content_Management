@@ -2,9 +2,9 @@ package com.ea.architecture.domain.driven.presentation.document.mapper;
 
 import com.ea.architecture.domain.driven.application.document.dto.AddDocumentDto;
 import com.ea.architecture.domain.driven.application.document.dto.DocumentDto;
+import com.ea.architecture.domain.driven.domain.common.adapter.EntityMapperUtil;
 import com.ea.architecture.domain.driven.domain.document.entity.DocumentResult;
 import com.ea.architecture.domain.driven.domain.document.model.DocumentAggregate;
-import com.ea.architecture.domain.driven.domain.common.adapter.EntityMapperUtil;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -17,7 +17,7 @@ import java.time.ZonedDateTime;
 @Mapper(componentModel = "spring")
 public interface DocumentPresentationMapper extends EntityMapperUtil {
     @Mapping(target = "owner", source = "creationUser")
-    @Mapping(target ="fileSize", source = "fileSize", qualifiedByName = "mapStringToFileSize")
+    @Mapping(target = "fileSize", source = "fileSize", qualifiedByName = "mapStringToFileSize")
     DocumentAggregate dtoToDomain(DocumentDto document);
 
     @Mapping(target = "creationUser", source = "owner")
@@ -35,12 +35,13 @@ public interface DocumentPresentationMapper extends EntityMapperUtil {
 
     @Mapping(target = "base64File", source = "file", qualifiedByName = "mapByteArrayToBase64String")
     @Mapping(target = "documentName", source = "documentName")
-    @Mapping(target = "id", source = "id" , qualifiedByName = "mapUniqueIdToString")
+    @Mapping(target = "id", source = "id", qualifiedByName = "mapLongToString")
     @Mapping(target = "fileSize", source = "fileSize", qualifiedByName = "mapFileSizeToString")
     DocumentResult domainToDocumentResult(DocumentAggregate document);
 
     /**
      * Set the creation date to the current date
+     *
      * @param document
      */
     @AfterMapping

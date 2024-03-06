@@ -1,7 +1,5 @@
 package com.ea.architecture.domain.driven.infrastructure.persistance.user.model;
 
-import com.ea.architecture.domain.driven.application.user.dto.AddressDto;
-import com.ea.architecture.domain.driven.application.user.dto.UserDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,12 +7,12 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name ="ADDRESS")
+@Table(name = "address")
 public class AddressEntity {
 
     @GeneratedValue
     @Id
-    private  long id;
+    private long id;
 
     @Column(name = "CITY")
     private String city;

@@ -8,5 +8,5 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public interface DocumentManagementCommandService {
-    public DocumentResult addOrUpdateDocument(DocumentAggregate documentAggregate);
+    public DocumentResult addDocument(DocumentAggregate documentAggregate);
 }

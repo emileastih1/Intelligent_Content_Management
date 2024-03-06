@@ -1,11 +1,9 @@
 package com.ea.architecture.domain.driven.domain.document.model;
 
-import com.ea.architecture.domain.driven.domain.common.model.UniqueId;
-
 import java.util.Map;
 
-public record DocumentUploadCommand(
-        UniqueId documentId,
+public record DocumentIndexCommand(
+        long documentId,
         String elasticId,
         String documentName,
         String documentType,

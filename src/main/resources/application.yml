@@ -9,16 +9,23 @@ spring:
   threads:
     virtual:
       enabled: true
-
+  datasource: #This is needed because docker compose is not able to detect the database if we are using custom docker images
+    url: jdbc:postgresql://localhost:5434/doc_management_db
+    username: postgres
+    password: toor
   jpa:
     hibernate:
       ddl-auto: none
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+      default_schema: documentcontent
+    show-sql: true
 
   liquibase:
-    change-log: classpath:db/changelog/schema-DEMO_DB/changeLog-master.xml
+    change-log: classpath:db/changelog/DocumentContent-DOC_MANAGEMENT_DB/changeLog-master.xml
+    default-schema: documentcontent
 
   docker:
     compose:

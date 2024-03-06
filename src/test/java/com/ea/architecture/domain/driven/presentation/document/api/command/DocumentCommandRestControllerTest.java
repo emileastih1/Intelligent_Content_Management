@@ -1,10 +1,9 @@
 package com.ea.architecture.domain.driven.presentation.document.api.command;
 
 import com.ea.architecture.domain.driven.application.document.dto.AddDocumentDto;
-import com.ea.architecture.domain.driven.domain.document.entity.DocumentResult;
 import com.ea.architecture.domain.driven.application.document.port.command.DocumentManagementCommandService;
 import com.ea.architecture.domain.driven.common.AbstractRestTest;
-import com.ea.architecture.domain.driven.domain.common.model.UniqueId;
+import com.ea.architecture.domain.driven.domain.document.entity.DocumentResult;
 import com.ea.architecture.domain.driven.domain.document.model.DocumentAggregate;
 import com.ea.architecture.domain.driven.domain.document.vo.DocumentStatus;
 import com.ea.architecture.domain.driven.domain.document.vo.DocumentTypes;
@@ -26,6 +25,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.nio.charset.Charset;
+
 class DocumentCommandRestControllerTest extends AbstractRestTest<DocumentCommandRestController> {
     @InjectMocks
     DocumentCommandRestController documentCommandRestController;
@@ -33,6 +33,7 @@ class DocumentCommandRestControllerTest extends AbstractRestTest<DocumentCommand
     DocumentManagementCommandService documentManagementCommandService;
     @Mock
     DocumentPresentationMapper documentPresentationMapper;
+
     @Override
     protected DocumentCommandRestController getController() {
         return this.documentCommandRestController;
@@ -40,17 +41,17 @@ class DocumentCommandRestControllerTest extends AbstractRestTest<DocumentCommand
 
     @Nested
     @DisplayName("Arguments validation: when a post request is made to add a document")
-    class ArgumentsValidation{
+    class ArgumentsValidation {
         @Test
         @DisplayName("With valid data then add document")
         void whenPostRequestToAddDocumentWithValidData_thenAddDocument() throws Exception {
             //Given
-            AddDocumentDto addDocumentDto = new AddDocumentDto("TestDocument" , "base64File", "15 MB", "JPG");
+            AddDocumentDto addDocumentDto = new AddDocumentDto("TestDocument", "base64File", "15 MB", "JPG");
 
             //Returned mocks
-            DocumentResult documentResult = new DocumentResult("123","","","","", DocumentStatus.CREATED.name());
+            DocumentResult documentResult = new DocumentResult("123", "", "", "", DocumentStatus.CREATED.name());
             DocumentAggregate documentAggregate = DocumentAggregate.builder()
-                    .id(new UniqueId("123"))
+                    .id(123L)
                     .documentName("TestDocument")
                     .documentType(DocumentTypes.JPG)
                     .fileSize(new FileSize("15", UnitOfMeasurement.MB))
@@ -58,7 +59,7 @@ class DocumentCommandRestControllerTest extends AbstractRestTest<DocumentCommand
                     .build();
             //When
             Mockito.doReturn(documentAggregate).when(documentPresentationMapper).dtoAddDocumentToDomain(addDocumentDto);
-            Mockito.doReturn(documentResult).when(documentManagementCommandService).addOrUpdateDocument(documentAggregate);
+            Mockito.doReturn(documentResult).when(documentManagementCommandService).addDocument(documentAggregate);
 
             //Then
             String jsonRequest = getObjectAsJsonContent(addDocumentDto);
@@ -79,11 +80,12 @@ class DocumentCommandRestControllerTest extends AbstractRestTest<DocumentCommand
 //        String jsonResponse = result.getResponse().getContentAsString();
 //        System.out.println("Response JSON: " + jsonResponse);
         }
+
         @Test
         @DisplayName("With empty document name then bad request")
-        void whenPostRequestToAddDocumentWithEmptyName_thenThrowMethodArgumentNotValidException () throws Exception {
+        void whenPostRequestToAddDocumentWithEmptyName_thenThrowMethodArgumentNotValidException() throws Exception {
             //Given
-            AddDocumentDto addDocumentDto = new AddDocumentDto("" , "base64File", "15 MB", "JPG");
+            AddDocumentDto addDocumentDto = new AddDocumentDto("", "base64File", "15 MB", "JPG");
 
             //Then
             mockMvc.perform(MockMvcRequestBuilders
@@ -102,11 +104,12 @@ class DocumentCommandRestControllerTest extends AbstractRestTest<DocumentCommand
                     .andReturn();
 
         }
+
         @Test
         @DisplayName("With empty file then bad request")
-        void whenPostRequestToAddDocumentWithEmptyFile_thenThrowMethodArgumentNotValidException () throws Exception {
+        void whenPostRequestToAddDocumentWithEmptyFile_thenThrowMethodArgumentNotValidException() throws Exception {
             //Given
-            AddDocumentDto addDocumentDto = new AddDocumentDto("TestDocument" , "", "15 MB", "JPG");
+            AddDocumentDto addDocumentDto = new AddDocumentDto("TestDocument", "", "15 MB", "JPG");
 
             //Then
             mockMvc.perform(MockMvcRequestBuilders
@@ -125,11 +128,12 @@ class DocumentCommandRestControllerTest extends AbstractRestTest<DocumentCommand
                     .andReturn();
 
         }
+
         @Test
         @DisplayName("With empty document type then bad request")
-        void whenPostRequestToAddDocumentWithEmptyDocumentType_thenThrowMethodArgumentNotValidException () throws Exception {
+        void whenPostRequestToAddDocumentWithEmptyDocumentType_thenThrowMethodArgumentNotValidException() throws Exception {
             //Given
-            AddDocumentDto addDocumentDto = new AddDocumentDto("TestDocument" , "base64File", "15 MB", "");
+            AddDocumentDto addDocumentDto = new AddDocumentDto("TestDocument", "base64File", "15 MB", "");
 
             //Then
             mockMvc.perform(MockMvcRequestBuilders
