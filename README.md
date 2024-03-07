@@ -72,3 +72,15 @@ wsl -d docker-desktop
 sysctl -w vm.max_map_count=262144
 sysctl vm.max_map_count
 ```
+
+## Support
+
+If you have any questions, encounter issues, or need assistance with this project, please don't hesitate to open an issue on GitHub.
+
+[Open an Issue](https://github.com/emileastih1/architecture_ddd/issues)
+
+Alternatively, you can reach out to us via email:
+
+📧 [emileastih1@gmail.com](mailto:emileastih1@gmail.com)
+
+We're committed to addressing your concerns and providing the support you need to ensure your experience with this project is smooth and successful.
