@@ -40,6 +40,11 @@ spring:
         enabled: true
       cluster-name: elasticsearch
       cluster-nodes: localhost:9200
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        model: gpt-3.5-turbo-1106
 
 elasticsearch:
   host: localhost                # ElasticSearch server address

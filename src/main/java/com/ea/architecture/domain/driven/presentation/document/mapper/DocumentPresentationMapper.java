@@ -33,7 +33,6 @@ public interface DocumentPresentationMapper extends EntityMapperUtil {
     @Mapping(target = "documentType", source = "fileType", qualifiedByName = "mapStringToDocumentType")
     DocumentAggregate dtoAddDocumentToDomain(AddDocumentDto document);
 
-    @Mapping(target = "base64File", source = "file", qualifiedByName = "mapByteArrayToBase64String")
     @Mapping(target = "documentName", source = "documentName")
     @Mapping(target = "id", source = "id", qualifiedByName = "mapLongToString")
     @Mapping(target = "fileSize", source = "fileSize", qualifiedByName = "mapFileSizeToString")
