@@ -1,6 +1,27 @@
+Certainly! Here's the modified README with the configuration paragraph added:
+
 # Architecture_DDD
 
 This project employs a blend of architectural patterns, incorporating Domain-Driven Design (DDD), Command Query Responsibility Segregation (CQRS), hexagonal architecture, and Domain Events. It has now been enhanced to include support for Elasticsearch, providing powerful search capabilities directly integrated with the Java API Client recommended for Spring Boot 3.x applications.
+
+Additionally, support for Spring AI using OpenAI has been added to perform retrieval augmented generation. This is facilitated by utilizing the pgVector extension for PostgreSQL as our vector store, seamlessly integrated into the document lifecycle when adding a new document.
+
+## Spring AI - OpenAI Configuration
+
+To use this project, you should create an OpenAI account ,if you don't already have one, and store your OpenAI key in the `application.yaml` file. In my case, I used an environment variable called `OPENAI_API_KEY`.
+
+You can also adapt the model to use via the property `spring.ai.openai.chat.model`.
+
+```yaml
+spring:
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        model: "gpt-3.5-turbo-1106"
+```
+
+Make sure to replace `"gpt-3.5-turbo-1106"` ,that I am using, with the model you intend to use for chat generation.
 
 ## Database Setup and Tools
 
@@ -50,3 +71,4 @@ To ensure Elasticsearch runs smoothly on Docker for Windows, especially within a
 wsl -d docker-desktop
 sysctl -w vm.max_map_count=262144
 sysctl vm.max_map_count
+```

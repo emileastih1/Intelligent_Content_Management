@@ -2,7 +2,7 @@ package com.ea.architecture.domain.driven.infrastructure.persistance.document.ad
 
 import com.ea.architecture.domain.driven.domain.document.mapper.DocumentIndexMapper;
 import com.ea.architecture.domain.driven.domain.document.model.DocumentAggregate;
-import com.ea.architecture.domain.driven.domain.document.model.DocumentIndexCommand;
+import com.ea.architecture.domain.driven.domain.document.model.DocumentFileCommand;
 import com.ea.architecture.domain.driven.domain.document.repository.command.DocumentDomainJpaServicePort;
 import com.ea.architecture.domain.driven.infrastructure.persistance.document.adapter.DocumentInfrastructureMapper;
 import com.ea.architecture.domain.driven.infrastructure.repository.document.DocumentJpaRepository;
@@ -27,7 +27,7 @@ public class DocumentJpaAdapter implements DocumentDomainJpaServicePort {
     @Override
     public long addDocument(DocumentAggregate documentAggregate) {
         //Create the command to index the document
-        DocumentIndexCommand documentIndexCommand = new DocumentIndexCommand(
+        DocumentFileCommand documentFileCommand = new DocumentFileCommand(
                 0L,
                 StringUtils.EMPTY,
                 documentAggregate.getDocumentName(),
@@ -35,8 +35,12 @@ public class DocumentJpaAdapter implements DocumentDomainJpaServicePort {
                 documentAggregate.getFile(),
                 null
         );
-        //Create the event by applying the command to the aggregate
-        documentAggregate.indexDocument(documentIndexCommand);
+        //Create the indexation event by applying the command to the aggregate
+        documentAggregate.indexDocument(documentFileCommand);
+
+        //Save the document to the vector store
+        documentAggregate.sendDocumentToEventStore(documentFileCommand);
+
         return documentJpaRepository.save(documentAggregate).getId();
     }
 }
