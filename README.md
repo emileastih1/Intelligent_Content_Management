@@ -79,7 +79,7 @@ If you have any questions, encounter issues, or need assistance with this projec
 
 [Open an Issue](https://github.com/emileastih1/architecture_ddd/issues)
 
-Alternatively, you can reach out to us via email:
+Alternatively, you can reach out to us via email at:
 
 📧 [emileastih1@gmail.com](mailto:emileastih1@gmail.com)
 
