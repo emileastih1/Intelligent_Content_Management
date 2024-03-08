@@ -2,7 +2,7 @@ package com.ea.architecture.domain.driven.domain.document.model;
 
 import java.util.Map;
 
-public record DocumentIndexCommand(
+public record DocumentFileCommand(
         long documentId,
         String elasticId,
         String documentName,

@@ -1,8 +1,10 @@
 package com.ea.architecture.domain.driven.domain.document.events;
 
 import com.ea.architecture.domain.driven.domain.document.entity.DocumentResult;
-import com.ea.architecture.domain.driven.domain.document.events.event.DocumentUploadFileEvent;
+import com.ea.architecture.domain.driven.domain.document.events.event.ai.DocumentSendToVectorStoreEvent;
+import com.ea.architecture.domain.driven.domain.document.events.event.elastic.DocumentUploadFileEvent;
 import com.ea.architecture.domain.driven.domain.document.model.DocumentAggregate;
+import com.ea.architecture.domain.driven.domain.document.repository.command.DocumentDomainAiServicePort;
 import com.ea.architecture.domain.driven.domain.document.repository.command.DocumentDomainElasticServicePort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,8 +16,11 @@ public class DocumentEventProcessor {
     private static final Logger LOGGER = LoggerFactory.getLogger(DocumentEventProcessor.class);
     DocumentDomainElasticServicePort documentDomainElasticServicePort;
 
-    public DocumentEventProcessor(DocumentDomainElasticServicePort documentDomainElasticServicePort) {
+    DocumentDomainAiServicePort documentDomainAiServicePort;
+
+    public DocumentEventProcessor(DocumentDomainElasticServicePort documentDomainElasticServicePort, DocumentDomainAiServicePort documentDomainAiServicePort) {
         this.documentDomainElasticServicePort = documentDomainElasticServicePort;
+        this.documentDomainAiServicePort = documentDomainAiServicePort;
     }
 
     @TransactionalEventListener
@@ -27,5 +32,13 @@ public class DocumentEventProcessor {
         DocumentResult documentResult = documentDomainElasticServicePort.addOrUpdateDocument(aggregate);
 
         LOGGER.info("DocumentEventProcessor.processDocumentUploadFileEvent documentResult: {}", documentResult);
+    }
+
+    @TransactionalEventListener
+    public void processDocumentSendToVectorStoreEvent(DocumentSendToVectorStoreEvent event) {
+        LOGGER.info("DocumentEventProcessor.processDocumentSendToVectorStoreEvent event: {}", event);
+        LOGGER.info("DocumentEventProcessor.processDocumentSendToVectorStoreEvent event aggregate: {}", event.getAggregate());
+
+        documentDomainAiServicePort.addDocumentToVectorStore(event.getAggregate());
     }
 }

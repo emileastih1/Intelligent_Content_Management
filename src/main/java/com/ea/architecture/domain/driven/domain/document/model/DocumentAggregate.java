@@ -1,7 +1,8 @@
 package com.ea.architecture.domain.driven.domain.document.model;
 
 import com.ea.architecture.domain.driven.domain.document.entity.DocumentAttachment;
-import com.ea.architecture.domain.driven.domain.document.events.event.DocumentUploadFileEvent;
+import com.ea.architecture.domain.driven.domain.document.events.event.ai.DocumentSendToVectorStoreEvent;
+import com.ea.architecture.domain.driven.domain.document.events.event.elastic.DocumentUploadFileEvent;
 import com.ea.architecture.domain.driven.domain.document.vo.DocumentStatus;
 import com.ea.architecture.domain.driven.domain.document.vo.DocumentTypes;
 import com.ea.architecture.domain.driven.domain.document.vo.FileSize;
@@ -60,18 +61,33 @@ public class DocumentAggregate extends AbstractAggregateRoot<DocumentAggregate> 
     @Transient
     private DocumentStatus documentStatus;
 
-    public void indexDocument(DocumentIndexCommand documentIndexCommand) {
-        Assert.notNull(documentIndexCommand.file(), "File cannot be null");
-        Assert.notNull(documentIndexCommand.documentName(), "Document name cannot be null");
-        Assert.notNull(documentIndexCommand.documentType(), "Document Type be null");
+    public void indexDocument(DocumentFileCommand documentFileCommand) {
+        Assert.notNull(documentFileCommand.file(), "File cannot be null");
+        Assert.notNull(documentFileCommand.documentName(), "Document name cannot be null");
+        Assert.notNull(documentFileCommand.documentType(), "Document Type be null");
 
         DocumentAttachment documentAttachment = new DocumentAttachment(
                 0L,
-                documentIndexCommand.documentName(),
-                documentIndexCommand.documentType(),
+                documentFileCommand.documentName(),
+                documentFileCommand.documentType(),
                 null,
-                documentIndexCommand.file());
+                documentFileCommand.file());
         DocumentUploadFileEvent documentUploadFileEvent = new DocumentUploadFileEvent(this, documentAttachment);
         this.registerEvent(documentUploadFileEvent);
+    }
+
+    public void sendDocumentToEventStore(DocumentFileCommand documentFileCommand) {
+        Assert.notNull(documentFileCommand.file(), "File cannot be null");
+        Assert.notNull(documentFileCommand.documentName(), "Document name cannot be null");
+        Assert.notNull(documentFileCommand.documentType(), "Document Type be null");
+
+        DocumentAttachment documentAttachment = new DocumentAttachment(
+                0L,
+                documentFileCommand.documentName(),
+                documentFileCommand.documentType(),
+                null,
+                documentFileCommand.file());
+        DocumentSendToVectorStoreEvent documentSendToVectorStoreEvent = new DocumentSendToVectorStoreEvent(this, documentAttachment);
+        this.registerEvent(documentSendToVectorStoreEvent);
     }
 }
