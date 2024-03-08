@@ -1,10 +1,20 @@
-Certainly! Here's the modified README with the configuration paragraph added:
+# Intelligent Document Management System
+This project is a Java-based Intelligent Document Management System (DMS) that leverages cutting-edge AI technologies to revolutionize the way you manage and interact with documents. 
+It incorporates advanced features powered by artificial intelligence to offer unparalleled efficiency and productivity. 
 
-# Architecture_DDD
+Our primary objective is to empower users with the ability to interact with the document repository conversationally. 
+By leveraging Language Model-based Systems (LLMs), our DMS allows users to query the repository in a natural and conversational manner
 
-This project employs a blend of architectural patterns, incorporating Domain-Driven Design (DDD), Command Query Responsibility Segregation (CQRS), hexagonal architecture, and Domain Events. It has now been enhanced to include support for Elasticsearch, providing powerful search capabilities directly integrated with the Java API Client recommended for Spring Boot 3.x applications.
+The system aims to intelligently categorizes, searches, and analyzes your documents, allowing you to focus on what truly matters.
+Our system leverages cutting-edge AI technologies to revolutionize the way you manage and interact with documents.
 
-Additionally, support for Spring AI using OpenAI has been added to perform retrieval augmented generation. This is facilitated by utilizing the pgVector extension for PostgreSQL as our vector store, seamlessly integrated into the document lifecycle when adding a new document.
+## [Architecture](architecture.md)
+
+This project employs a blend of architectural patterns, incorporating Domain-Driven Design (DDD), Command Query Responsibility Segregation (CQRS), hexagonal architecture, and Domain Events. 
+It has been enhanced to include support for Elasticsearch, providing powerful search capabilities directly integrated with the Java API Client recommended for Spring Boot 3.x applications.
+
+Additionally, support for Spring AI using OpenAI has been added to perform retrieval augmented generation. 
+This is facilitated by utilizing the pgVector extension for PostgreSQL as our vector store, seamlessly integrated into the document lifecycle when adding a new document.
 
 ## Spring AI - OpenAI Configuration
 
