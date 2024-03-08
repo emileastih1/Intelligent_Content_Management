@@ -1,4 +1,4 @@
-package com.ea.architecture.domain.driven.domain.document.events.event;
+package com.ea.architecture.domain.driven.domain.document.events.event.ai;
 
 import com.ea.architecture.domain.driven.domain.document.entity.DocumentAttachment;
 import com.ea.architecture.domain.driven.domain.document.model.DocumentAggregate;
@@ -9,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public final class DocumentUploadFileEvent {
+public final class DocumentSendToVectorStoreEvent {
     private DocumentAggregate aggregate;
     private DocumentAttachment documentAttachment;
 
