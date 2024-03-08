@@ -8,7 +8,7 @@ By leveraging Language Model-based Systems (LLMs), our DMS allows users to query
 The system aims to intelligently categorizes, searches, and analyzes your documents, allowing you to focus on what truly matters.
 Our system leverages cutting-edge AI technologies to revolutionize the way you manage and interact with documents.
 
-## [Architecture](architecture.md)
+## [Architecture](Architecture.md)
 
 This project employs a blend of architectural patterns, incorporating Domain-Driven Design (DDD), Command Query Responsibility Segregation (CQRS), hexagonal architecture, and Domain Events. 
 It has been enhanced to include support for Elasticsearch, providing powerful search capabilities directly integrated with the Java API Client recommended for Spring Boot 3.x applications.
