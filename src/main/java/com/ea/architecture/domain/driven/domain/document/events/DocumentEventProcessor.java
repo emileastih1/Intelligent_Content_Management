@@ -4,23 +4,25 @@ import com.ea.architecture.domain.driven.domain.document.entity.DocumentResult;
 import com.ea.architecture.domain.driven.domain.document.events.event.ai.DocumentSendToVectorStoreEvent;
 import com.ea.architecture.domain.driven.domain.document.events.event.elastic.DocumentUploadFileEvent;
 import com.ea.architecture.domain.driven.domain.document.model.DocumentAggregate;
-import com.ea.architecture.domain.driven.domain.document.repository.command.DocumentDomainAiServicePort;
 import com.ea.architecture.domain.driven.domain.document.repository.command.DocumentDomainElasticServicePort;
+import com.ea.architecture.domain.driven.infrastructure.persistance.external.adapter.command.DocumentAiCommandServiceClientCommandAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;
+import org.springframework.util.Assert;
 
 @Component
 public class DocumentEventProcessor {
     private static final Logger LOGGER = LoggerFactory.getLogger(DocumentEventProcessor.class);
     DocumentDomainElasticServicePort documentDomainElasticServicePort;
 
-    DocumentDomainAiServicePort documentDomainAiServicePort;
+    DocumentAiCommandServiceClientCommandAdapter documentAiCommandServiceAdapter;
 
-    public DocumentEventProcessor(DocumentDomainElasticServicePort documentDomainElasticServicePort, DocumentDomainAiServicePort documentDomainAiServicePort) {
+    public DocumentEventProcessor(DocumentDomainElasticServicePort documentDomainElasticServicePort,
+                                  DocumentAiCommandServiceClientCommandAdapter documentAiCommandServiceAdapter) {
         this.documentDomainElasticServicePort = documentDomainElasticServicePort;
-        this.documentDomainAiServicePort = documentDomainAiServicePort;
+        this.documentAiCommandServiceAdapter = documentAiCommandServiceAdapter;
     }
 
     @TransactionalEventListener
@@ -34,11 +36,12 @@ public class DocumentEventProcessor {
         LOGGER.info("DocumentEventProcessor.processDocumentUploadFileEvent documentResult: {}", documentResult);
     }
 
-    @TransactionalEventListener
+    @TransactionalEventListener(condition = "#event.aggregate != null")
     public void processDocumentSendToVectorStoreEvent(DocumentSendToVectorStoreEvent event) {
         LOGGER.info("DocumentEventProcessor.processDocumentSendToVectorStoreEvent event: {}", event);
         LOGGER.info("DocumentEventProcessor.processDocumentSendToVectorStoreEvent event aggregate: {}", event.getAggregate());
 
-        documentDomainAiServicePort.addDocumentToVectorStore(event.getAggregate());
+        Assert.notNull(event.getAggregate(), "DocumentEventProcessor.processDocumentSendToVectorStoreEvent event aggregate is null");
+        documentAiCommandServiceAdapter.sendToVectorStore(event.getAggregate());
     }
 }

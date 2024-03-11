@@ -66,12 +66,12 @@ The project now includes Elasticsearch support, utilizing the Java API Client wh
 ## Application Access
 
 The application can be accessed at:
-- [http://localhost:8085/ddd](http://localhost:8085/ddd)
+- [http://localhost:8085/idm](http://localhost:8085/idm)
 
 ## Swagger UI
 
 Explore the API using Swagger UI at:
-- [http://localhost:8085/ddd/swagger-ui/index.html](http://localhost:8085/ddd/swagger-ui/index.html)
+- [http://localhost:8085/idm/swagger-ui/index.html](http://localhost:8085/idm/swagger-ui/index.html)
 
 ## Windows Docker Setup
 

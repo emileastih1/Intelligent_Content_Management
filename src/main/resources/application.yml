@@ -1,11 +1,11 @@
 server:
     port: 8085
     servlet:
-      context-path: /ddd
+      context-path: /idm
 
 spring:
   application:
-    name: spring-domain-driver-design
+    name: intelligent-document-management
   threads:
     virtual:
       enabled: true
@@ -45,6 +45,13 @@ spring:
       api-key: ${OPENAI_API_KEY}
       chat:
         model: gpt-3.5-turbo-1106
+
+aiServiceClient:
+  type: openai
+  url: http://localhost:8086
+  path: /AiServiceClient
+  version: v1
+  timeout: 10000
 
 elasticsearch:
   host: localhost                # ElasticSearch server address

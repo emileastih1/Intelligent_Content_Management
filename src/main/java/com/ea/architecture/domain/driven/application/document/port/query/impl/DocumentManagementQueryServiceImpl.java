@@ -3,8 +3,6 @@ package com.ea.architecture.domain.driven.application.document.port.query.impl;
 import com.ea.architecture.domain.driven.application.document.port.query.DocumentManagementQueryService;
 import com.ea.architecture.domain.driven.domain.document.model.DocumentAggregate;
 import com.ea.architecture.domain.driven.domain.document.repository.query.DocumentDomainQueryServicePort;
-import com.ea.architecture.domain.driven.domain.document.vo.ai.Answer;
-import com.ea.architecture.domain.driven.domain.document.vo.ai.Question;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -38,11 +36,6 @@ public class DocumentManagementQueryServiceImpl implements DocumentManagementQue
     @Override
     public DocumentAggregate extractDocumentByFilter(DocumentAggregate documentAggregate) {
         return null;
-    }
-
-    @Override
-    public Answer askRelevantQuestion(Question question) {
-        return documentDomainQueryServicePort.askRelevantQuestion(question);
     }
 
 }

@@ -3,8 +3,6 @@ package com.ea.architecture.domain.driven.presentation.document.api.query;
 import com.ea.architecture.domain.driven.application.config.security.RestSecurityConfiguration;
 import com.ea.architecture.domain.driven.application.document.dto.DocumentDto;
 import com.ea.architecture.domain.driven.application.document.port.query.DocumentManagementQueryService;
-import com.ea.architecture.domain.driven.domain.document.vo.ai.Answer;
-import com.ea.architecture.domain.driven.domain.document.vo.ai.Question;
 import com.ea.architecture.domain.driven.presentation.common.api.BaseRestController;
 import com.ea.architecture.domain.driven.presentation.document.mapper.DocumentPresentationMapper;
 import com.ea.architecture.domain.driven.presentation.user.api.UserQueryRestController;
@@ -19,7 +17,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Document", description = "API gateway to query the document domain")
 @RestController
@@ -49,18 +49,4 @@ public class DocumentQueryRestController extends BaseRestController {
         return new ResponseEntity<>((documentPresentationMapper.domainToDto(documentManagementQueryService.findDocumentById(id))), HttpStatus.OK);
     }
 
-    @Operation(
-            summary = "Ask a relevant question",
-            description = "Ask a relevant question",
-            security = {@SecurityRequirement(name = RestSecurityConfiguration.BASIC_AUTH, scopes = {RestSecurityConfiguration.PERM_READ})},
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "ok", content = @Content(
-                            schema = @Schema(implementation = Answer.class)
-                    ))
-            }
-    )
-    @PostMapping(value = "/v1/document/ask", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Answer> askRelevantQuestion(@RequestBody Question question) {
-        return new ResponseEntity<>(documentManagementQueryService.askRelevantQuestion(question), HttpStatus.OK);
-    }
 }
