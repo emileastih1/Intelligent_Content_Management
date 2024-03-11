@@ -1,8 +1,6 @@
 package com.ea.architecture.domain.driven.domain.document.repository.query;
 
 import com.ea.architecture.domain.driven.domain.document.model.DocumentAggregate;
-import com.ea.architecture.domain.driven.domain.document.vo.ai.Answer;
-import com.ea.architecture.domain.driven.domain.document.vo.ai.Question;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,5 +15,4 @@ public interface DocumentDomainQueryServicePort {
 
     DocumentAggregate extractDocumentByFilter(DocumentAggregate documentAggregate);
 
-    Answer askRelevantQuestion(Question question);
 }

@@ -15,7 +15,7 @@ services:
     networks:
       backend:
         aliases:
-          - "database-test"
+          - "database"
     container_name: spring-postgresql-db
   pgadmin:
     image: dpage/pgadmin4:8.0
@@ -24,6 +24,8 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: emileastih1@gmail.com
       PGADMIN_DEFAULT_PASSWORD: toor
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
     networks:
       backend:
         aliases:
@@ -54,6 +56,9 @@ volumes:
     driver:
       local
   elasticsearch-data:
+    driver:
+      local
+  pgadmin-data:
     driver:
       local
 networks:

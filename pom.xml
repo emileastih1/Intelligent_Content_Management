@@ -17,7 +17,7 @@
 
     <properties>
         <java.version>17</java.version>
-        <swagger-file>DomainDriverArchitecture-OpenApi</swagger-file>
+        <swagger-file>IntelligentDocumentManagement-OpenApi</swagger-file>
         <spring-boot.run.wait>120000</spring-boot.run.wait>
         <spring-ai.version>0.8.0</spring-ai.version>
     </properties>
@@ -45,6 +45,8 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
         </dependency>
+
+        <!-- Database versioning -->
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
@@ -76,24 +78,6 @@
             <artifactId>tika-parsers-standard-package</artifactId>
             <version>2.9.1</version>
         </dependency>
-
-        <!-- Spring AI -->
-        <dependency>
-            <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-openai-spring-boot-starter</artifactId>
-            <version>${spring-ai.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-pgvector-store-spring-boot-starter</artifactId>
-            <version>${spring-ai.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-tika-document-reader</artifactId>
-            <version>${spring-ai.version}</version>
-        </dependency>
-        <!-- End Spring AI -->
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -156,7 +140,6 @@
         </dependency>
 
         <!-- Tools -->
-        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-devtools -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
@@ -172,29 +155,6 @@
                 </dependency>-->
 
     </dependencies>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.springframework.ai</groupId>
-                <artifactId>spring-ai-bom</artifactId>
-                <version>${spring-ai.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
-    <repositories>
-        <repository>
-            <id>spring-milestones</id>
-            <name>Spring Milestones</name>
-            <url>https://repo.spring.io/milestone</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
 
     <build>
         <plugins>
