@@ -3,6 +3,7 @@ package com.ea.architecture.domain.driven.presentation.external.api.query;
 import com.ea.architecture.domain.driven.application.external.port.query.AiServiceClientQuery;
 import com.ea.architecture.domain.driven.domain.document.vo.ai.Answer;
 import com.ea.architecture.domain.driven.domain.document.vo.ai.Question;
+import com.ea.architecture.domain.driven.presentation.common.api.BaseRestController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Tag(name = "AiServiceClient", description = "API gateway to communicate with the external AI Service Client")
-public class AiServiceClientQueryRestController {
+public class AiServiceClientQueryRestController extends BaseRestController {
     private final AiServiceClientQuery aiServiceClientQuery;
 
     public AiServiceClientQueryRestController(AiServiceClientQuery aiServiceClientQuery) {
