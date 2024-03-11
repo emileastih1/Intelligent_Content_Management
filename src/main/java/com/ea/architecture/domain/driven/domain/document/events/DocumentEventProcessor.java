@@ -8,6 +8,7 @@ import com.ea.architecture.domain.driven.domain.document.repository.command.Docu
 import com.ea.architecture.domain.driven.infrastructure.persistance.external.adapter.command.DocumentAiCommandServiceClientCommandAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.util.Assert;
@@ -25,6 +26,7 @@ public class DocumentEventProcessor {
         this.documentAiCommandServiceAdapter = documentAiCommandServiceAdapter;
     }
 
+    @Async
     @TransactionalEventListener
     public void processDocumentUploadFileEvent(DocumentUploadFileEvent event) {
         LOGGER.info("DocumentEventProcessor.processDocumentUploadFileEvent event: {}", event);
@@ -36,6 +38,7 @@ public class DocumentEventProcessor {
         LOGGER.info("DocumentEventProcessor.processDocumentUploadFileEvent documentResult: {}", documentResult);
     }
 
+    @Async
     @TransactionalEventListener(condition = "#event.aggregate != null")
     public void processDocumentSendToVectorStoreEvent(DocumentSendToVectorStoreEvent event) {
         LOGGER.info("DocumentEventProcessor.processDocumentSendToVectorStoreEvent event: {}", event);
