@@ -2,8 +2,8 @@ package com.ea.architecture.domain.driven.application.user.impl.query;
 
 import com.ea.architecture.domain.driven.application.mapper.ApplicationMapper;
 import com.ea.architecture.domain.driven.application.user.port.query.UserManagementQueryService;
-import com.ea.architecture.domain.driven.domain.user.repository.UserDomainQueryServicePort;
 import com.ea.architecture.domain.driven.domain.user.model.UserAggregate;
+import com.ea.architecture.domain.driven.domain.user.repository.UserDomainQueryServicePort;
 import org.springframework.stereotype.Service;
 
 /**

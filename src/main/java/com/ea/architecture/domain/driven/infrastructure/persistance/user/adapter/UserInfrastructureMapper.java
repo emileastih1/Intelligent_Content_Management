@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 public interface UserInfrastructureMapper extends EntityMapperUtil {
     @Mapping(source = "id.id", target = "id")
     UserEntity domainToEntity(UserAggregate userAggregate);
+
     @Mapping(source = "id", target = "id.id")
     UserAggregate entityToDomain(UserEntity userEntity);
 }

@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class UserQueryRestController extends BaseRestController {
 
-    public static final  Logger logger = LoggerFactory.getLogger(UserQueryRestController.class);
+    public static final Logger logger = LoggerFactory.getLogger(UserQueryRestController.class);
 
     UserManagementQueryService userManagementQueryService;
 
@@ -54,12 +54,12 @@ public class UserQueryRestController extends BaseRestController {
     }
 
     @GetMapping(value = "/test")
-    public String testGetHttpVerb(){
+    public String testGetHttpVerb() {
         return "Hello World!";
     }
 
     @PostMapping(path = "/test/post")
-    public void testPostHttpVerb(){
+    public void testPostHttpVerb() {
         System.out.println("Hello World Post!");
     }
 }

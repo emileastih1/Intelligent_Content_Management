@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Profile;
 @Profile("BasicAuth")
 @Configuration
 @ConfigurationProperties(prefix = "elasticsearch")
-public class ElasticSearchConfiguration  {
+public class ElasticSearchConfiguration {
     @Value("${elasticsearch.host}")
     private String host;
     @Value("${elasticsearch.port}")
@@ -34,7 +34,7 @@ public class ElasticSearchConfiguration  {
     @Bean
     public ElasticsearchClient getElasticSearchClient() {
         final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-        credentialsProvider.setCredentials(AuthScope.ANY,new UsernamePasswordCredentials(username, password));
+        credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(username, password));
 
         RestClientBuilder builder = RestClient.builder(new HttpHost(host, port))
                 .setHttpClientConfigCallback(httpClientBuilder ->

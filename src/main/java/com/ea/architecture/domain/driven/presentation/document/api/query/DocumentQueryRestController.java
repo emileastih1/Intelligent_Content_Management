@@ -5,15 +5,13 @@ import com.ea.architecture.domain.driven.application.document.dto.DocumentDto;
 import com.ea.architecture.domain.driven.application.document.port.query.DocumentManagementQueryService;
 import com.ea.architecture.domain.driven.presentation.common.api.BaseRestController;
 import com.ea.architecture.domain.driven.presentation.document.mapper.DocumentPresentationMapper;
-import com.ea.architecture.domain.driven.presentation.user.api.UserQueryRestController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Document", description = "API gateway to query the document domain")
 @RestController
+@Slf4j
 public class DocumentQueryRestController extends BaseRestController {
 
-    public static final Logger logger = LoggerFactory.getLogger(UserQueryRestController.class);
     DocumentManagementQueryService documentManagementQueryService;
     DocumentPresentationMapper documentPresentationMapper;
 

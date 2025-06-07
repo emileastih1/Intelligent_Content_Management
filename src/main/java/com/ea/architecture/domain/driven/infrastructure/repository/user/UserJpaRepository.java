@@ -1,7 +1,6 @@
 package com.ea.architecture.domain.driven.infrastructure.repository.user;
 
 import com.ea.architecture.domain.driven.infrastructure.persistance.user.model.UserEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.stereotype.Repository;
 

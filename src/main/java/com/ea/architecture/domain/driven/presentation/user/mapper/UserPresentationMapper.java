@@ -9,9 +9,10 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Mapper(componentModel = "spring")
-public interface UserPresentationMapper extends EntityMapperUtil{
+public interface UserPresentationMapper extends EntityMapperUtil {
     @Mapping(target = "id", source = "id.id")
     UserDto domainToDto(UserAggregate userAggregate);
+
     @Mapping(target = "id.id", source = "id")
     UserAggregate dtoToDomain(UserDto userDto);
 }

@@ -112,7 +112,7 @@ public class BackendExceptionHandler {
                     schema = @Schema(implementation = ApiErrorDto.class)
             )
     )
-    public ApiErrorDto handleMethodArgumentTypeMismatchException (MethodArgumentTypeMismatchException ex) {
+    public ApiErrorDto handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
         ApiErrorDto apiErrorDto = new ApiErrorDto(ErrorMessageConstants.ERROR_ARGUMENT_TYPE_MISMATCH, ErrorMessageConstants.ERROR_CODE_ARGUMENT_TYPE_MISMATCH, HttpStatus.BAD_REQUEST.value(), ex.getMessage());
         LOGGER.error("Validation error: {}", apiErrorDto);
         return apiErrorDto;
