@@ -40,14 +40,8 @@ spring:
         enabled: true
       cluster-name: elasticsearch
       cluster-nodes: localhost:9200
-  ai:
-    openai:
-      api-key: ${OPENAI_API_KEY}
-      chat:
-        model: gpt-3.5-turbo-1106
 
 aiServiceClient:
-  type: openai
   url: http://localhost:8086
   path: /AiServiceClient
   version: v1
