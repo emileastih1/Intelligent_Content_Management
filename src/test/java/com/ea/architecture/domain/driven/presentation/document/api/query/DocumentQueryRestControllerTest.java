@@ -54,7 +54,8 @@ public class DocumentQueryRestControllerTest extends AbstractRestTest<DocumentQu
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().json(jsonReturned));
+                .andExpect(MockMvcResultMatchers.content().json(jsonReturned))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.documentName").value("Legal Document"));
     }
 
     @Test

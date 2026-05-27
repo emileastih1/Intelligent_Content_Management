@@ -35,7 +35,7 @@ public class DocumentElasticSearchQueryAdapter implements DocumentDomainQuerySer
             documentElasticEntity = documentESConnectorRepository
                     .getDocumentById(documentId);
         } catch (IOException e) {
-            LOGGER.error("Error while retrieving document by ID: " + e.getMessage());
+            LOGGER.error("Error while retrieving document by ID: {}", e.getMessage());
             throw new FunctionalException(MessageCode.DOCUMENT_NOT_FOUND, "Document not found: " + e.getMessage());
         }
         return documentInfrastructureMapper.entityToDomain(documentElasticEntity);

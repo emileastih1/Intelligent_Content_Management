@@ -94,3 +94,28 @@ Alternatively, you can reach out to us via email at:
 📧 [emileastih1@gmail.com](mailto:emileastih1@gmail.com)
 
 We're committed to addressing your concerns and providing the support you need to ensure your experience with this project is smooth and successful.
+
+## Dependency Audit
+
+This project includes a simple audit to report dependency vulnerabilities and available updates across supported package managers in this repo.
+
+How to run (Windows PowerShell):
+
+- Ensure Java and Maven are installed and available on your PATH.
+- From the project root, run:
+
+```
+./audit-dependencies.ps1
+```
+
+What it does:
+- Uses OWASP Dependency-Check to scan for known vulnerabilities and collects IDs, severity, and when possible a fixed version.
+- Uses the Versions Maven Plugin to list available dependency updates and groups them into patch, minor, and major.
+- Skips/batches majors and flags them as potentially breaking changes.
+- Detects Docker images referenced by docker-compose.yml and lists them for manual tag review.
+
+Output:
+- A Markdown summary file named `dependency-audit-<YYYY-MM-DD>.md` in the project root.
+
+Next steps:
+- If you would like, we can automatically apply PATCH/MINOR updates and run tests. Major updates will be listed for manual review because they might introduce breaking changes.

@@ -1,9 +1,7 @@
 package com.ea.architecture.domain.driven.domain.document.repository.query;
 
 import com.ea.architecture.domain.driven.domain.document.model.DocumentAggregate;
-import org.springframework.stereotype.Service;
 
-@Service
 public interface DocumentDomainQueryServicePort {
     DocumentAggregate retrieveDocumentById(String documentId);
 
