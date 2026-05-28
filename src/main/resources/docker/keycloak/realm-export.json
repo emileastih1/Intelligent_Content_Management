@@ -1,0 +1,45 @@
+{
+  "realm": "intelligent-content-management",
+  "enabled": true,
+  "clients": [
+    {
+      "clientId": "intelligent-content-management-api",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "icm-secret",
+      "bearerOnly": false,
+      "publicClient": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "protocol": "openid-connect",
+      "attributes": {},
+      "authorizationServicesEnabled": false
+    }
+  ],
+  "roles": {
+    "client": {
+      "intelligent-content-management-api": [
+        { "name": "READ", "composite": false, "clientRole": true },
+        { "name": "WRITE", "composite": false, "clientRole": true }
+      ]
+    }
+  },
+  "users": [
+    {
+      "username": "user-read",
+      "enabled": true,
+      "credentials": [{ "type": "password", "value": "password", "temporary": false }],
+      "clientRoles": {
+        "intelligent-content-management-api": ["READ"]
+      }
+    },
+    {
+      "username": "user-write",
+      "enabled": true,
+      "credentials": [{ "type": "password", "value": "password", "temporary": false }],
+      "clientRoles": {
+        "intelligent-content-management-api": ["WRITE"]
+      }
+    }
+  ]
+}
