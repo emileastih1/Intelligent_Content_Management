@@ -94,7 +94,7 @@ AI endpoints (e.g. `POST /api/v1/document/ask`) require the `dms` service — se
 
 The `windows-docker-desktop` Maven profile sets `DOCKER_HOST` to the Docker Desktop named pipe so Testcontainers can reach the Docker socket.
 
-**Elasticsearch on Windows/WSL2** — run once after Docker Desktop starts:
+**Elasticsearch on Windows/WSL2** — run once after Docker Desktop starts (the `docker-desktop` distro runs as root):
 
 ```bash
 wsl -d docker-desktop
