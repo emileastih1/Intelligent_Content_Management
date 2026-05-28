@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,6 +38,7 @@ public class AiServiceClientQueryRestController extends BaseRestController {
                             ))
             }
     )
+    @PreAuthorize("hasRole('READ')")
     @PostMapping(value = "/v1/document/ask", produces = "application/json")
     public ResponseEntity<Answer> askQuestion(@RequestBody @Valid Question question) {
         return new ResponseEntity<Answer>(aiServiceClientQuery.askQuestion(question), HttpStatus.OK);

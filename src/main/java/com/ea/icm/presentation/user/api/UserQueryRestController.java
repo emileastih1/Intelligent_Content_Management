@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -47,17 +48,20 @@ public class UserQueryRestController extends BaseRestController {
                     ))
             }
     )
+    @PreAuthorize("hasRole('READ')")
     @PostMapping(value = "/v1/person/search", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDto> findUser(@RequestBody UserDto dto) throws Exception {
         logger.info("Connected User: " + getConnectedUser());
         return new ResponseEntity<>((userPresentationMapper.domainToDto(userManagementQueryService.getUserByFilter(userPresentationMapper.dtoToDomain(dto)))), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('READ')")
     @GetMapping(value = "/test")
     public String testGetHttpVerb() {
         return "Hello World!";
     }
 
+    @PreAuthorize("hasRole('READ')")
     @PostMapping(path = "/test/post")
     public void testPostHttpVerb() {
         System.out.println("Hello World Post!");
