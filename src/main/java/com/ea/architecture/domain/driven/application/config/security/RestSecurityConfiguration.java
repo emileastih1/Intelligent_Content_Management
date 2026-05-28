@@ -4,7 +4,7 @@ public class RestSecurityConfiguration {
 
     public static final String URL_BASE_PATH = "/api";
 
-    public static final String BASIC_AUTH = "BasicAuth";
+    public static final String BASIC_AUTH = "secured";
 
     //TODO Add permission list names here
     public static final String PERMISSION_PREFIX = "demo-api:";
