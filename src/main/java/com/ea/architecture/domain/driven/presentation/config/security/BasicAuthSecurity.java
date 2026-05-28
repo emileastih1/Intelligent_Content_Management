@@ -25,6 +25,8 @@ public class BasicAuthSecurity {
                                 "/swagger-ui/**",
                                 "/v3/api-docs",
                                 "/v3/api-docs/**",
+                                "/v3/rest-api-docs",
+                                "/v3/rest-api-docs/**",
                                 "/actuator/health"
                         ).permitAll()
                         .anyRequest().authenticated()

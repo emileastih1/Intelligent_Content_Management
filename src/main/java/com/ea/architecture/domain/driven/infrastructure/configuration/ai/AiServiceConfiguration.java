@@ -11,7 +11,7 @@ public class AiServiceConfiguration {
     private String aiServiceUrl;
     @Value("${aiServiceClient.path}")
     private String aiServicePath;
-    @Value("${aiServiceClient.type}")
+    @Value("${aiServiceClient.type:rest}")
     private String aiServiceType;
 
     @Bean("aiServiceRestClient")

@@ -34,13 +34,6 @@ spring:
       enabled: true
       file: classpath:docker/docker-compose.yml
 
-  data:
-    elasticsearch:
-      repositories:
-        enabled: true
-      cluster-name: elasticsearch
-      cluster-nodes: localhost:9200
-
   elasticsearch:
     uris: http://localhost:9200
 
