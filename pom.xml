@@ -8,10 +8,10 @@
         <version>4.0.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.ea.architecture</groupId>
-    <artifactId>domain.driven</artifactId>
+    <groupId>com.ea.icm</groupId>
+    <artifactId>intelligent-content-management</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>domain.driver</name>
+    <name>intelligent-content-management</name>
     <description>A sample document management system based on the DDD concepts, CQRS and hexagonal architectures
     </description>
 

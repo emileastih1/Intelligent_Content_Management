@@ -1,0 +1,1 @@
+package com.ea.icm.domain.user.model;
