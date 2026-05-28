@@ -1,0 +1,65 @@
+package com.ea.icm.presentation.user.api;
+
+import com.ea.icm.application.config.security.RestSecurityConfiguration;
+import com.ea.icm.application.user.dto.UserDto;
+import com.ea.icm.application.user.port.query.UserManagementQueryService;
+import com.ea.icm.presentation.common.api.BaseRestController;
+import com.ea.icm.presentation.user.mapper.UserPresentationMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+
+@Tag(name = "User", description = "API gateway to query the user domain")
+@RestController
+public class UserQueryRestController extends BaseRestController {
+
+    public static final Logger logger = LoggerFactory.getLogger(UserQueryRestController.class);
+
+    UserManagementQueryService userManagementQueryService;
+
+    UserPresentationMapper userPresentationMapper;
+
+    public UserQueryRestController(UserManagementQueryService userManagementQueryService, UserPresentationMapper userExpositionMapper) {
+        this.userManagementQueryService = userManagementQueryService;
+        this.userPresentationMapper = userExpositionMapper;
+    }
+
+    @Operation(
+            summary = "Find a user",
+            description = "Find a user by supplying different filters",
+            security = {@SecurityRequirement(name = RestSecurityConfiguration.BASIC_AUTH, scopes = {RestSecurityConfiguration.PERM_READ})},
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "ok", content = @Content(
+                            schema = @Schema(implementation = UserDto.class)
+                    ))
+            }
+    )
+    @PostMapping(value = "/v1/person/search", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UserDto> findUser(@RequestBody UserDto dto) throws Exception {
+        logger.info("Connected User: " + getConnectedUser());
+        return new ResponseEntity<>((userPresentationMapper.domainToDto(userManagementQueryService.getUserByFilter(userPresentationMapper.dtoToDomain(dto)))), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/test")
+    public String testGetHttpVerb() {
+        return "Hello World!";
+    }
+
+    @PostMapping(path = "/test/post")
+    public void testPostHttpVerb() {
+        System.out.println("Hello World Post!");
+    }
+}
