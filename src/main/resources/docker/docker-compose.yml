@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   db:
-    image: ankane/pgvector
+    image: postgres:16
     ports:
       - '5434:5432'
     volumes:
@@ -46,6 +46,7 @@ services:
       - node.name=elasticsearch01
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
     deploy:
         resources:
             limits:

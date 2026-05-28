@@ -34,30 +34,14 @@ spring:
       enabled: true
       file: classpath:docker/docker-compose.yml
 
-  data:
-    elasticsearch:
-      repositories:
-        enabled: true
-      cluster-name: elasticsearch
-      cluster-nodes: localhost:9200
-  ai:
-    openai:
-      api-key: ${OPENAI_API_KEY}
-      chat:
-        model: gpt-3.5-turbo-1106
+  elasticsearch:
+    uris: http://localhost:9200
 
 aiServiceClient:
-  type: openai
   url: http://localhost:8086
   path: /AiServiceClient
   version: v1
   timeout: 10000
-
-elasticsearch:
-  host: localhost                # ElasticSearch server address
-  port: 9200                          # ElasticSearch server port
-  username: elastic                   # Basic auth username
-  password: 1iywLzMrAi-YOLP8-OWW      # Basic auth password
 
 document:
   extraction:

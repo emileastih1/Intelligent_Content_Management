@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.1</version>
+        <version>4.0.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.ea.architecture</groupId>
@@ -16,11 +16,22 @@
     </description>
 
     <properties>
-        <java.version>17</java.version>
+        <java.version>21</java.version>
         <swagger-file>IntelligentDocumentManagement-OpenApi</swagger-file>
         <spring-boot.run.wait>120000</spring-boot.run.wait>
-        <spring-ai.version>0.8.0</spring-ai.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>1.21.4</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -53,19 +64,16 @@
             <artifactId>liquibase-core</artifactId>
         </dependency>
 
+        <!-- RestClient support -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-restclient</artifactId>
+        </dependency>
+
         <!-- document repository -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
-        </dependency>
-        <!--
-            Note that the High Level REST Client is deprecated in favour of the Java API Client
-            that we are using here
-            since elastic 7.15.0
-         -->
-        <dependency>
-            <groupId>co.elastic.clients</groupId>
-            <artifactId>elasticsearch-java</artifactId>
         </dependency>
 
         <!-- Apache Tika for content extraction -->
@@ -99,7 +107,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.30</version>
+            <version>1.18.36</version>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -125,7 +133,7 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>2.3.0</version>
+            <version>2.8.8</version>
         </dependency>
 
         <!-- Tests -->
@@ -140,20 +148,34 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Testcontainers -->
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>elasticsearch</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <!-- Tools -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <optional>true</optional>
         </dependency>
-
-        <!-- This dependency is used to print the package structure into the console -->
-        <!--		<dependency>
-                    <groupId>org.qunix</groupId>
-                    <artifactId>structure-maven-plugin</artifactId>
-                    <version>0.0.2</version>
-                    <optional>true</optional>
-                </dependency>-->
 
     </dependencies>
 
@@ -170,20 +192,6 @@
                         </exclude>
                     </excludes>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>pre-integration-test</id>
-                        <goals>
-                            <goal>start</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>post-integration-test</id>
-                        <goals>
-                            <goal>stop</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -194,7 +202,7 @@
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
-                            <version>1.18.30</version>
+                            <version>1.18.36</version>
                         </path>
                         <path>
                             <groupId>org.projectlombok</groupId>
@@ -204,7 +212,7 @@
                         <path>
                             <groupId>org.mapstruct</groupId>
                             <artifactId>mapstruct-processor</artifactId>
-                            <version>1.6.0.Beta1</version>
+                            <version>1.6.3</version>
                         </path>
                     </annotationProcessorPaths>
                     <compilerArgs>
@@ -214,54 +222,7 @@
                     </compilerArgs>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.springdoc</groupId>
-                <artifactId>springdoc-openapi-maven-plugin</artifactId>
-                <version>1.4</version>
-                <executions>
-                    <execution>
-                        <phase>integration-test</phase>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <apiDocsUrl>http://localhost:8085/v3/rest-api-docs/Public-API</apiDocsUrl>
-                            <outputFileName>{swagger-file}.json</outputFileName>
-                            <outputDir>OpenAPIDescription</outputDir>
-                            <skip>false</skip>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
 
-            <!-- This plugin is used to print the package structure into the console -->
-            <plugin>
-                <groupId>org.qunix</groupId>
-                <artifactId>structure-maven-plugin</artifactId>
-                <version>0.0.2</version>
-                <inherited>false</inherited>
-                <executions>
-                    <execution>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>
-                                files
-                            </goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <ignores>
-                        <ignore>target.*</ignore>
-                        <ignore>.git</ignore>
-                        <ignore>.idea</ignore>
-                        <ignore>.mvn</ignore>
-                        <ignore>\.settings.*</ignore>
-                        <ignore>\.project.*</ignore>
-                        <ignore>\.classpath.*</ignore>
-                    </ignores>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
@@ -269,5 +230,24 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>windows-docker-desktop</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <DOCKER_HOST>tcp://localhost:2375</DOCKER_HOST>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
