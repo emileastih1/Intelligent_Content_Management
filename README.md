@@ -87,7 +87,7 @@ sysctl vm.max_map_count
 
 If you have any questions, encounter issues, or need assistance with this project, please don't hesitate to open an issue on GitHub.
 
-[Open an Issue](https://github.com/emileastih1/architecture_ddd/issues)
+[Open an Issue](https://github.com/emileastih1/Intelligent_Content_Management/issues)
 
 Alternatively, you can reach out to us via email at:
 

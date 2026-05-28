@@ -1,0 +1,93 @@
+{
+  "realm": "intelligent-content-management",
+  "enabled": true,
+  "requiredActions": [
+    {
+      "alias": "VERIFY_PROFILE",
+      "name": "Verify Profile",
+      "providerId": "VERIFY_PROFILE",
+      "enabled": true,
+      "defaultAction": false,
+      "priority": 90,
+      "config": {}
+    },
+    {
+      "alias": "UPDATE_PROFILE",
+      "name": "Update Profile",
+      "providerId": "UPDATE_PROFILE",
+      "enabled": true,
+      "defaultAction": false,
+      "priority": 40,
+      "config": {}
+    },
+    {
+      "alias": "UPDATE_PASSWORD",
+      "name": "Update Password",
+      "providerId": "UPDATE_PASSWORD",
+      "enabled": true,
+      "defaultAction": false,
+      "priority": 30,
+      "config": {}
+    },
+    {
+      "alias": "VERIFY_EMAIL",
+      "name": "Verify Email",
+      "providerId": "VERIFY_EMAIL",
+      "enabled": true,
+      "defaultAction": false,
+      "priority": 50,
+      "config": {}
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "intelligent-content-management-api",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "icm-secret",
+      "bearerOnly": false,
+      "publicClient": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "protocol": "openid-connect",
+      "attributes": {},
+      "authorizationServicesEnabled": false
+    }
+  ],
+  "roles": {
+    "client": {
+      "intelligent-content-management-api": [
+        { "name": "READ", "composite": false, "clientRole": true },
+        { "name": "WRITE", "composite": false, "clientRole": true }
+      ]
+    }
+  },
+  "users": [
+    {
+      "username": "user-read",
+      "firstName": "User",
+      "lastName": "Read",
+      "email": "user-read@example.com",
+      "enabled": true,
+      "emailVerified": true,
+      "requiredActions": [],
+      "credentials": [{ "type": "password", "value": "password", "temporary": false }],
+      "clientRoles": {
+        "intelligent-content-management-api": ["READ"]
+      }
+    },
+    {
+      "username": "user-write",
+      "firstName": "User",
+      "lastName": "Write",
+      "email": "user-write@example.com",
+      "enabled": true,
+      "emailVerified": true,
+      "requiredActions": [],
+      "credentials": [{ "type": "password", "value": "password", "temporary": false }],
+      "clientRoles": {
+        "intelligent-content-management-api": ["WRITE"]
+      }
+    }
+  ]
+}

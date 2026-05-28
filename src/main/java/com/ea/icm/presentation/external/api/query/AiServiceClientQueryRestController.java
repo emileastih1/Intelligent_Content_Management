@@ -1,5 +1,6 @@
 package com.ea.icm.presentation.external.api.query;
 
+import com.ea.icm.application.config.security.RestSecurityConfiguration;
 import com.ea.icm.application.external.port.query.AiServiceClientQuery;
 import com.ea.icm.domain.document.vo.ai.Answer;
 import com.ea.icm.domain.document.vo.ai.Question;
@@ -8,10 +9,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,6 +31,7 @@ public class AiServiceClientQueryRestController extends BaseRestController {
     @Operation(
             summary = "Ask a relevant question",
             description = "Ask a relevant question",
+            security = {@SecurityRequirement(name = RestSecurityConfiguration.BEARER_AUTH)},
             responses = {
                     @ApiResponse(
                             responseCode = "200",
@@ -37,6 +41,7 @@ public class AiServiceClientQueryRestController extends BaseRestController {
                             ))
             }
     )
+    @PreAuthorize("hasRole('READ')")
     @PostMapping(value = "/v1/document/ask", produces = "application/json")
     public ResponseEntity<Answer> askQuestion(@RequestBody @Valid Question question) {
         return new ResponseEntity<Answer>(aiServiceClientQuery.askQuestion(question), HttpStatus.OK);

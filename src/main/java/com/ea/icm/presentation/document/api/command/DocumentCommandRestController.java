@@ -18,6 +18,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,13 +39,14 @@ public class DocumentCommandRestController extends BaseRestController {
     @Operation(
             summary = "Add document",
             description = "Add document",
-            security = {@SecurityRequirement(name = RestSecurityConfiguration.BASIC_AUTH, scopes = {RestSecurityConfiguration.PERM_WRITE})},
+            security = {@SecurityRequirement(name = RestSecurityConfiguration.BEARER_AUTH, scopes = {RestSecurityConfiguration.PERM_WRITE})},
             responses = {
                     @ApiResponse(responseCode = "200", description = "ok", content = @Content(
                             schema = @Schema(implementation = DocumentDto.class)
                     ))
             }
     )
+    @PreAuthorize("hasRole('WRITE')")
     @PostMapping(value = "/v1/document", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DocumentResult> addDocument(@Valid @RequestBody AddDocumentDto documentDto) {
         DocumentAggregate documentAggregate = documentPresentationMapper.dtoAddDocumentToDomain(documentDto);
@@ -55,7 +57,7 @@ public class DocumentCommandRestController extends BaseRestController {
 /*    @Operation(
             summary = "Upload document",
             description = "Upload document",
-            security = {@SecurityRequirement(name = RestSecurityConfiguration.BASIC_AUTH, scopes = {RestSecurityConfiguration.PERM_WRITE})},
+            security = {@SecurityRequirement(name = RestSecurityConfiguration.BEARER_AUTH, scopes = {RestSecurityConfiguration.PERM_WRITE})},
             responses = {
                     @ApiResponse(responseCode = "200", description = "ok", content = @Content(
                             schema = @Schema(implementation = DocumentDto.class)

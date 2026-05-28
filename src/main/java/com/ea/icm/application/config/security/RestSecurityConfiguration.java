@@ -4,10 +4,8 @@ public class RestSecurityConfiguration {
 
     public static final String URL_BASE_PATH = "/api";
 
-    public static final String BASIC_AUTH = "secured";
+    public static final String BEARER_AUTH = "bearerAuth";
 
-    //TODO Add permission list names here
-    public static final String PERMISSION_PREFIX = "demo-api:";
-    public static final String PERM_READ = PERMISSION_PREFIX + "READ";
-    public static final String PERM_WRITE = PERMISSION_PREFIX + "WRITE";
+    public static final String PERM_READ = "READ";
+    public static final String PERM_WRITE = "WRITE";
 }
