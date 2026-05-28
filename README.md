@@ -119,3 +119,51 @@ Output:
 
 Next steps:
 - If you would like, we can automatically apply PATCH/MINOR updates and run tests. Major updates will be listed for manual review because they might introduce breaking changes.
+
+## Running Tests
+
+### Standard run (PowerShell / bash / WSL)
+
+```shell
+mvn test
+```
+
+### Disable Spring Boot Docker Compose during a full test run
+
+**PowerShell / bash:**
+```shell
+mvn test -Dspring.docker.compose.enabled=false
+```
+
+**Windows CMD:** wrap the `-D` argument in double quotes so `=` is not misinterpreted by the batch wrapper:
+```cmd
+mvn test "-Dspring.docker.compose.enabled=false"
+```
+
+> Note: `ApplicationContextTest` already declares `spring.docker.compose.enabled=false` via
+> `@SpringBootTest(properties = {...})`, so the flag is only needed when running the full suite
+> and you want to suppress Docker Compose for all other tests as well.
+
+### Running `ApplicationContextTest` with Testcontainers on Windows
+
+Testcontainers needs access to the Docker socket. Two ways to provide it:
+
+**Option A — IDE (zero configuration)**
+
+`src/test/resources/testcontainers.properties` is already committed and points at the
+Docker Desktop named pipe. Just make sure Docker Desktop is running and run the test normally
+from your IDE.
+
+**Option B — Maven command line with the Windows profile**
+
+```shell
+mvn test -Pwindows-docker-desktop
+```
+
+The `windows-docker-desktop` Maven profile sets `DOCKER_HOST` to the Docker Desktop named pipe
+(`npipe:////./pipe/dockerDesktopLinuxEngine`) via the Surefire `environmentVariables` block, so
+Testcontainers picks it up automatically.
+
+> If you see `[WARNING] The requested profile "windows-docker-desktop" could not be activated …`
+> make sure you are on the `feat/spring-boot-4-upgrade` branch (or any branch that includes the
+> profiles section of `pom.xml`). The profile does not exist in older branches.
