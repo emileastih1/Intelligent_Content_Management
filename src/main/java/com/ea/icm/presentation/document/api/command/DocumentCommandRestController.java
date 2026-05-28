@@ -38,7 +38,7 @@ public class DocumentCommandRestController extends BaseRestController {
     @Operation(
             summary = "Add document",
             description = "Add document",
-            security = {@SecurityRequirement(name = RestSecurityConfiguration.BASIC_AUTH, scopes = {RestSecurityConfiguration.PERM_WRITE})},
+            security = {@SecurityRequirement(name = RestSecurityConfiguration.BEARER_AUTH, scopes = {RestSecurityConfiguration.PERM_WRITE})},
             responses = {
                     @ApiResponse(responseCode = "200", description = "ok", content = @Content(
                             schema = @Schema(implementation = DocumentDto.class)
@@ -55,7 +55,7 @@ public class DocumentCommandRestController extends BaseRestController {
 /*    @Operation(
             summary = "Upload document",
             description = "Upload document",
-            security = {@SecurityRequirement(name = RestSecurityConfiguration.BASIC_AUTH, scopes = {RestSecurityConfiguration.PERM_WRITE})},
+            security = {@SecurityRequirement(name = RestSecurityConfiguration.BEARER_AUTH, scopes = {RestSecurityConfiguration.PERM_WRITE})},
             responses = {
                     @ApiResponse(responseCode = "200", description = "ok", content = @Content(
                             schema = @Schema(implementation = DocumentDto.class)

@@ -35,7 +35,7 @@ public class DocumentQueryRestController extends BaseRestController {
     @Operation(
             summary = "Find a document by Id",
             description = "Find a document by Id",
-            security = {@SecurityRequirement(name = RestSecurityConfiguration.BASIC_AUTH, scopes = {RestSecurityConfiguration.PERM_READ})},
+            security = {@SecurityRequirement(name = RestSecurityConfiguration.BEARER_AUTH, scopes = {RestSecurityConfiguration.PERM_READ})},
             responses = {
                     @ApiResponse(responseCode = "200", description = "ok", content = @Content(
                             schema = @Schema(implementation = DocumentDto.class)
