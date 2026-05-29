@@ -58,10 +58,11 @@
             <artifactId>postgresql</artifactId>
         </dependency>
 
-        <!-- Database versioning -->
+        <!-- Database versioning — spring-boot-starter-liquibase brings spring-boot-liquibase
+             (LiquibaseAutoConfiguration) which was split out of spring-boot-autoconfigure in Spring Boot 4.x -->
         <dependency>
-            <groupId>org.liquibase</groupId>
-            <artifactId>liquibase-core</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-liquibase</artifactId>
         </dependency>
 
         <!-- RestClient support -->
