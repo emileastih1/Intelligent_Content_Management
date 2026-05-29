@@ -10,9 +10,13 @@ spring:
     virtual:
       enabled: true
   datasource: #This is needed because docker compose is not able to detect the database if we are using custom docker images
-    url: jdbc:postgresql://localhost:5434/doc_management_db
+    url: jdbc:postgresql://localhost:5434/doc_management_db?currentSchema=documentcontent
     username: postgres
     password: toor
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db/init/schema.sql
   jpa:
     hibernate:
       ddl-auto: none
