@@ -6,4 +6,6 @@ public interface AiServiceClientCommandPort {
     void sendToVectorStore(DocumentAggregate aggregate);
 
     void deleteFromVectorStore(long documentId);
+
+    void embedContent(long documentId, String documentName, String content);
 }

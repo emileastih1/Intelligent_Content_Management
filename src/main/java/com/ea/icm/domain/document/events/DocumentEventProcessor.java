@@ -3,6 +3,7 @@ package com.ea.icm.domain.document.events;
 import com.ea.icm.domain.document.entity.DocumentResult;
 import com.ea.icm.domain.document.events.event.ai.DocumentClassifySentimentEvent;
 import com.ea.icm.domain.document.events.event.ai.DocumentDeleteFromVectorStoreEvent;
+import com.ea.icm.domain.document.events.event.ai.DocumentEmbedContentEvent;
 import com.ea.icm.domain.document.events.event.ai.DocumentSendToVectorStoreEvent;
 import com.ea.icm.domain.document.events.event.elastic.DocumentUploadFileEvent;
 import com.ea.icm.domain.document.model.DocumentAggregate;
@@ -54,6 +55,19 @@ public class DocumentEventProcessor {
         LOGGER.info("DocumentEventProcessor.processDocumentSendToVectorStoreEvent event: {}", event);
         Assert.notNull(event.getAggregate(), "event aggregate is null");
         documentAiCommandServiceAdapter.sendToVectorStore(event.getAggregate());
+    }
+
+    // Embed document content via the content-first DMS endpoint (ADR-0004)
+    @Async
+    @TransactionalEventListener
+    public void processDocumentEmbedContentEvent(DocumentEmbedContentEvent event) {
+        LOGGER.info("DocumentEventProcessor.processDocumentEmbedContentEvent documentId: {}", event.getDocumentId());
+        try {
+            documentAiCommandServiceAdapter.embedContent(
+                    event.getDocumentId(), event.getDocumentName(), event.getContent());
+        } catch (Exception e) {
+            LOGGER.warn("embedContent failed for documentId {}: {}", event.getDocumentId(), e.getMessage());
+        }
     }
 
     // Purge all chunks for a deleted document from the vector store (ADR-0007)

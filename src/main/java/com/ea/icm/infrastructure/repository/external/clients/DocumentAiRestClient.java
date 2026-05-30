@@ -54,6 +54,20 @@ public class DocumentAiRestClient {
                 .toBodilessEntity();
     }
 
+    public void embedContent(long documentId, String documentName, String content) {
+        LOGGER.info("DocumentAiRestClient.embedContent documentId: {}", documentId);
+        var payload = new java.util.HashMap<String, String>();
+        payload.put("documentId", String.valueOf(documentId));
+        payload.put("documentName", documentName != null ? documentName : "");
+        payload.put("content", content != null ? content : "");
+        restClient.post()
+                .uri("/v1/document/embed-content")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(payload)
+                .retrieve()
+                .toBodilessEntity();
+    }
+
     public String classifySentiment(String content) {
         LOGGER.info("DocumentAiRestClient.classifySentiment");
         var response = restClient.post()

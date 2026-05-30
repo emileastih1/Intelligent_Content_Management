@@ -47,4 +47,8 @@ public class AiServiceExternalRepository {
     public String classifySentiment(String content) {
         return documentAiRestClient.classifySentiment(content);
     }
+
+    public void embedContent(long documentId, String documentName, String content) {
+        documentAiRestClient.embedContent(documentId, documentName, content);
+    }
 }

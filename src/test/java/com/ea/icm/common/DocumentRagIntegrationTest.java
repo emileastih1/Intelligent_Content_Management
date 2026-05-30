@@ -863,6 +863,74 @@ class DocumentRagIntegrationTest {
     }
 
     // -------------------------------------------------------------------------
+    // Cycle 14: content-first embedding — authored document create fires
+    //           embed-content to DMS using TEXT_CONTENT (not file bytes, ADR-0004)
+    // -------------------------------------------------------------------------
+
+    @Test
+    @DisplayName("Author a document then DMS embed-content is called with TEXT_CONTENT")
+    void authorDocumentFiresEmbedContentToDms() {
+        // Stub: DMS embed-content endpoint (new content-first path)
+        wireMock.stubFor(post(urlEqualTo("/AiServiceClient/v1/document/embed-content"))
+                .willReturn(aResponse().withStatus(200)));
+
+        String writeToken = obtainToken("user-write", "password");
+        RestClient restClient = RestClient.create();
+
+        ResponseEntity<String> createResponse = restClient.post()
+                .uri("http://localhost:" + port + "/idm/api/v1/document")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + writeToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("{\"name\":\"Authored Note\",\"content\":\"content for embedding\"}")
+                .retrieve()
+                .onStatus(status -> true, (req, res) -> {})
+                .toEntity(String.class);
+
+        assertThat(createResponse.getStatusCode().value())
+                .as("Author create should return 200. Body: " + createResponse.getBody())
+                .isEqualTo(HttpStatus.OK.value());
+
+        // DMS embed-content must be called asynchronously with the document content
+        Awaitility.await().atMost(5, java.util.concurrent.TimeUnit.SECONDS)
+                .untilAsserted(() ->
+                        wireMock.verify(postRequestedFor(urlEqualTo("/AiServiceClient/v1/document/embed-content"))
+                                .withRequestBody(containing("content for embedding"))));
+    }
+
+    @Test
+    @DisplayName("Upload a file then DMS embed-content is called with extracted TEXT_CONTENT")
+    void uploadDocumentFiresEmbedContentWithExtractedText() {
+        // Stub: DMS embed-content (new path) — old /v1/document should NOT be called
+        wireMock.stubFor(post(urlEqualTo("/AiServiceClient/v1/document/embed-content"))
+                .willReturn(aResponse().withStatus(200)));
+
+        String writeToken = obtainToken("user-write", "password");
+        RestClient restClient = RestClient.create();
+
+        String base64 = java.util.Base64.getEncoder()
+                .encodeToString("extracted upload text".getBytes(java.nio.charset.StandardCharsets.UTF_8));
+
+        ResponseEntity<String> createResponse = restClient.post()
+                .uri("http://localhost:" + port + "/idm/api/v1/document")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + writeToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("{\"name\":\"upload.txt\",\"base64File\":\"" + base64 + "\",\"fileType\":\"TXT\"}")
+                .retrieve()
+                .onStatus(status -> true, (req, res) -> {})
+                .toEntity(String.class);
+
+        assertThat(createResponse.getStatusCode().value())
+                .as("Upload create should return 200. Body: " + createResponse.getBody())
+                .isEqualTo(HttpStatus.OK.value());
+
+        // embed-content must be called with the Tika-extracted text
+        Awaitility.await().atMost(5, java.util.concurrent.TimeUnit.SECONDS)
+                .untilAsserted(() ->
+                        wireMock.verify(postRequestedFor(urlEqualTo("/AiServiceClient/v1/document/embed-content"))
+                                .withRequestBody(containing("extracted upload text"))));
+    }
+
+    // -------------------------------------------------------------------------
     // Helpers
     // -------------------------------------------------------------------------
 

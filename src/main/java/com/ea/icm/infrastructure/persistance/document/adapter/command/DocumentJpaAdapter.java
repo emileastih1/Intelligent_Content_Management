@@ -4,6 +4,7 @@ import com.ea.icm.domain.document.mapper.DocumentIndexMapper;
 import com.ea.icm.domain.document.model.DocumentAggregate;
 import com.ea.icm.domain.document.events.event.ai.DocumentClassifySentimentEvent;
 import com.ea.icm.domain.document.events.event.ai.DocumentDeleteFromVectorStoreEvent;
+import com.ea.icm.domain.document.events.event.ai.DocumentEmbedContentEvent;
 import com.ea.icm.domain.document.events.event.elastic.DocumentUploadFileEvent;
 import com.ea.icm.domain.document.model.DocumentFileCommand;
 import com.ea.icm.domain.document.repository.command.DocumentDomainElasticServicePort;
@@ -84,11 +85,14 @@ public class DocumentJpaAdapter implements DocumentDomainJpaServicePort {
 
         documentAggregate.pullDomainEvents().forEach(applicationEventPublisher::publishEvent);
 
-        // Async sentiment classification — fires after commit (ADR-0007)
-        String contentForSentiment = documentAggregate.getContent();
-        if (contentForSentiment != null && !contentForSentiment.isBlank()) {
+        // Content-first embedding: always embed via TEXT_CONTENT, not raw file (ADR-0004)
+        String contentToEmbed = documentAggregate.getContent();
+        if (contentToEmbed != null && !contentToEmbed.isBlank()) {
             applicationEventPublisher.publishEvent(
-                    new DocumentClassifySentimentEvent(id, contentForSentiment));
+                    new DocumentEmbedContentEvent(id, documentAggregate.getDocumentName(), contentToEmbed));
+            // Async sentiment classification (ADR-0007)
+            applicationEventPublisher.publishEvent(
+                    new DocumentClassifySentimentEvent(id, contentToEmbed));
         }
 
         return id;
