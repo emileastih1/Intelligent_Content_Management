@@ -44,15 +44,25 @@ public class DocumentElasticSearchQueryAdapter implements DocumentDomainQuerySer
 
     @Override
     public DocumentAggregate retrieveDocumentById(String documentId) {
-        DocumentElasticEntity documentElasticEntity = null;
+        // Content-first Documents are the source of truth in Postgres (ADR-0004).
+        // Try JPA first (gives us textContent); fall back to Elasticsearch for legacy elastic-id lookups.
         try {
-            documentElasticEntity = documentESConnectorRepository
+            long jpaId = Long.parseLong(documentId);
+            return documentJpaRepository.findById(jpaId)
+                    .map(documentInfrastructureMapper::jpaEntityToDomain)
+                    .orElseThrow(() -> new FunctionalException(MessageCode.DOCUMENT_NOT_FOUND,
+                            "Document not found: " + documentId));
+        } catch (NumberFormatException ignored) {
+            // Not a numeric JPA id — try Elasticsearch (elastic string id)
+        }
+        try {
+            DocumentElasticEntity documentElasticEntity = documentESConnectorRepository
                     .getDocumentById(documentId);
+            return documentInfrastructureMapper.entityToDomain(documentElasticEntity);
         } catch (IOException e) {
             LOGGER.error("Error while retrieving document by ID: {}", e.getMessage());
             throw new FunctionalException(MessageCode.DOCUMENT_NOT_FOUND, "Document not found: " + e.getMessage());
         }
-        return documentInfrastructureMapper.entityToDomain(documentElasticEntity);
     }
 
     @Override

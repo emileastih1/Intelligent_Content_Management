@@ -2,14 +2,19 @@ package com.ea.icm.infrastructure.persistance.document.adapter.command;
 
 import com.ea.icm.domain.document.mapper.DocumentIndexMapper;
 import com.ea.icm.domain.document.model.DocumentAggregate;
+import com.ea.icm.domain.document.events.event.elastic.DocumentUploadFileEvent;
 import com.ea.icm.domain.document.model.DocumentFileCommand;
 import com.ea.icm.domain.document.repository.command.DocumentDomainJpaServicePort;
+import com.ea.icm.domain.exception.FunctionalException;
+import com.ea.icm.domain.exception.MessageCode;
 import com.ea.icm.infrastructure.persistance.document.adapter.DocumentInfrastructureMapper;
 import com.ea.icm.infrastructure.persistance.document.model.DocumentEntity;
 import com.ea.icm.infrastructure.repository.document.DocumentJpaRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+
+import java.time.ZonedDateTime;
 
 @Service
 public class DocumentJpaAdapter implements DocumentDomainJpaServicePort {
@@ -56,5 +61,32 @@ public class DocumentJpaAdapter implements DocumentDomainJpaServicePort {
         documentAggregate.pullDomainEvents().forEach(applicationEventPublisher::publishEvent);
 
         return id;
+    }
+
+    @Override
+    public DocumentAggregate updateDocument(DocumentAggregate documentAggregate) {
+        long id = documentAggregate.getId();
+        DocumentEntity existing = documentJpaRepository.findById(id)
+                .orElseThrow(() -> new FunctionalException(MessageCode.DOCUMENT_NOT_FOUND,
+                        "Document not found: " + id));
+
+        if (documentAggregate.getDocumentName() != null) {
+            existing.setName(documentAggregate.getDocumentName());
+        }
+        if (documentAggregate.getContent() != null) {
+            existing.setTextContent(documentAggregate.getContent());
+        }
+        existing.setModificationDate(ZonedDateTime.now());
+
+        DocumentEntity saved = documentJpaRepository.save(existing);
+
+        // Re-index in Elasticsearch if content changed (ADR-0004)
+        DocumentAggregate updated = documentInfrastructureMapper.jpaEntityToDomain(saved);
+        if (documentAggregate.getContent() != null) {
+            DocumentUploadFileEvent event = new DocumentUploadFileEvent(updated, null);
+            applicationEventPublisher.publishEvent(event);
+        }
+
+        return updated;
     }
 }

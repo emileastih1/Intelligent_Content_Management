@@ -19,7 +19,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -52,6 +54,26 @@ public class DocumentCommandRestController extends BaseRestController {
         DocumentAggregate documentAggregate = documentPresentationMapper.dtoAddDocumentToDomain(documentDto);
         DocumentResult result = documentManagementCommandService.addDocument(documentAggregate);
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @Operation(
+            summary = "Update document",
+            description = "Update document name and/or content",
+            security = {@SecurityRequirement(name = RestSecurityConfiguration.BEARER_AUTH, scopes = {RestSecurityConfiguration.PERM_WRITE})},
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "ok", content = @Content(
+                            schema = @Schema(implementation = DocumentDto.class)
+                    ))
+            }
+    )
+    @PreAuthorize("hasRole('WRITE')")
+    @PutMapping(value = "/v1/document/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<DocumentDto> updateDocument(@PathVariable long id,
+                                                      @RequestBody AddDocumentDto documentDto) {
+        DocumentAggregate aggregate = documentPresentationMapper.dtoAddDocumentToDomain(documentDto);
+        aggregate.setId(id);
+        DocumentAggregate updated = documentManagementCommandService.updateDocument(aggregate);
+        return new ResponseEntity<>(documentPresentationMapper.domainToDto(updated), HttpStatus.OK);
     }
 
 /*    @Operation(

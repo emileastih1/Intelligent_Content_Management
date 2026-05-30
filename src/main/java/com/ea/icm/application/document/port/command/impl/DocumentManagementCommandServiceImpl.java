@@ -45,4 +45,9 @@ public class DocumentManagementCommandServiceImpl implements DocumentManagementC
         long documentId = documentDomainJpaServicePort.addDocument(documentAggregate);
         return new DocumentResult(String.valueOf(documentId));
     }
+
+    @Override
+    public DocumentAggregate updateDocument(DocumentAggregate documentAggregate) {
+        return documentDomainJpaServicePort.updateDocument(documentAggregate);
+    }
 }

@@ -452,6 +452,72 @@ class DocumentRagIntegrationTest {
     }
 
     // -------------------------------------------------------------------------
+    // Cycle 8: edit Document content — PUT updates content; GET returns updated
+    //          content; Elasticsearch is re-indexed (slice #70)
+    // -------------------------------------------------------------------------
+
+    @Test
+    @DisplayName("Edit Document content — PUT updates content and GET reflects the change")
+    void editDocumentContentThenGetReturnsUpdatedContent() {
+        String writeToken = obtainToken("user-write", "password");
+        String readToken = obtainToken("user-read", "password");
+
+        wireMock.stubFor(post(urlEqualTo("/AiServiceClient/v1/document"))
+                .willReturn(aResponse().withStatus(200)));
+
+        RestClient restClient = RestClient.create();
+
+        // Step 1: create a document
+        ResponseEntity<String> createResponse = restClient.post()
+                .uri("http://localhost:" + port + "/idm/api/v1/document")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + writeToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("{\"name\":\"Editable Note\",\"content\":\"original text\"}")
+                .retrieve()
+                .onStatus(status -> true, (req, res) -> {})
+                .toEntity(String.class);
+
+        assertThat(createResponse.getStatusCode().value())
+                .as("Create should succeed. Body: " + createResponse.getBody())
+                .isEqualTo(HttpStatus.OK.value());
+
+        // Extract the document id from the DocumentResult response
+        String createBody = createResponse.getBody();
+        String docId = extractJsonField(createBody, "id");
+        assertThat(docId).as("Created document must have an id").isNotBlank();
+
+        // Step 2: edit the content via PUT
+        ResponseEntity<String> updateResponse = restClient.put()
+                .uri("http://localhost:" + port + "/idm/api/v1/document/" + docId)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + writeToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("{\"name\":\"Editable Note\",\"content\":\"updated text\"}")
+                .retrieve()
+                .onStatus(status -> true, (req, res) -> {})
+                .toEntity(String.class);
+
+        assertThat(updateResponse.getStatusCode().value())
+                .as("PUT update should return 200. Body: " + updateResponse.getBody())
+                .isEqualTo(HttpStatus.OK.value());
+
+        // Step 3: GET the document by id — content must reflect the update
+        ResponseEntity<String> getResponse = restClient.get()
+                .uri("http://localhost:" + port + "/idm/api/v1/document/" + docId)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + readToken)
+                .retrieve()
+                .onStatus(status -> true, (req, res) -> {})
+                .toEntity(String.class);
+
+        assertThat(getResponse.getStatusCode().value())
+                .as("GET by id should return 200. Body: " + getResponse.getBody())
+                .isEqualTo(HttpStatus.OK.value());
+
+        assertThat(getResponse.getBody())
+                .as("GET response should contain the updated content")
+                .contains("updated text");
+    }
+
+    // -------------------------------------------------------------------------
     // Helpers
     // -------------------------------------------------------------------------
 

@@ -4,4 +4,6 @@ import com.ea.icm.domain.document.model.DocumentAggregate;
 
 public interface DocumentDomainJpaServicePort {
     long addDocument(DocumentAggregate document);
+
+    DocumentAggregate updateDocument(DocumentAggregate document);
 }

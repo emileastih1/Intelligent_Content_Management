@@ -21,6 +21,7 @@ public interface DocumentPresentationMapper extends EntityMapperUtil {
     DocumentAggregate dtoToDomain(DocumentDto document);
 
     @Mapping(target = "creationUser", source = "owner")
+    @Mapping(target = "content", source = "content")
     @Mapping(target = "fileSize", source = "fileSize", qualifiedByName = "mapFileSizeToString")
     DocumentDto domainToDto(DocumentAggregate document);
 
@@ -28,6 +29,7 @@ public interface DocumentPresentationMapper extends EntityMapperUtil {
     DocumentResult toDocumentResult(String documentResult);
 
     @Mapping(target = "documentName", source = "name")
+    @Mapping(target = "content", source = "content")
     @Mapping(target = "file", source = "base64File", qualifiedByName = "mapBase64StringToByteArray")
     @Mapping(target = "fileSize", source = "fileSize", qualifiedByName = "mapStringToFileSize")
     @Mapping(target = "documentType", source = "fileType", qualifiedByName = "mapStringToDocumentType")
