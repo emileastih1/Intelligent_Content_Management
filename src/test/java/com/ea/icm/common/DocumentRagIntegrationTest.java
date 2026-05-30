@@ -1,5 +1,6 @@
 package com.ea.icm.common;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import dasniko.testcontainers.keycloak.KeycloakContainer;
 import org.junit.jupiter.api.AfterAll;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpHeaders;
@@ -67,7 +69,7 @@ class DocumentRagIntegrationTest {
 
     @Container
     static ElasticsearchContainer elasticsearch =
-            new ElasticsearchContainer("docker.elastic.co/elasticsearch/elasticsearch:8.12.1")
+            new ElasticsearchContainer("docker.elastic.co/elasticsearch/elasticsearch:9.0.0")
                     .withEnv("xpack.security.enabled", "false");
 
     @Container
@@ -158,6 +160,9 @@ class DocumentRagIntegrationTest {
                     HttpResponse.BodyHandlers.ofString());
         }
     }
+
+    @Autowired
+    private ElasticsearchClient elasticsearchClient;
 
     @LocalServerPort
     private int port;
@@ -293,6 +298,38 @@ class DocumentRagIntegrationTest {
 
         wireMock.verify(postRequestedFor(urlPathEqualTo("/AiServiceClient/v1/document/ask"))
                 .withQueryParam("topK", equalTo("2")));
+    }
+
+    // -------------------------------------------------------------------------
+    // Cycle 5: upload → document is indexed in Elasticsearch
+    // -------------------------------------------------------------------------
+
+    @Test
+    @DisplayName("Upload doc indexes document in Elasticsearch")
+    void uploadDocIndexesInElasticsearch() {
+        wireMock.stubFor(post(urlEqualTo("/AiServiceClient/v1/document"))
+                .willReturn(aResponse().withStatus(200)));
+
+        String writeToken = obtainToken("user-write", "password");
+
+        RestClient restClient = RestClient.create();
+        restClient.post()
+                .uri("http://localhost:" + port + "/idm/api/v1/document")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + writeToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("{\"name\":\"cv.pdf\",\"base64File\":\"dGVzdA==\",\"fileSize\":\"1 KB\",\"fileType\":\"PDF\"}")
+                .retrieve()
+                .onStatus(status -> true, (req, res) -> {})
+                .toEntity(String.class);
+
+        Awaitility.await()
+                .atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    long count = elasticsearchClient.count(c -> c.index("document")).count();
+                    assertThat(count)
+                            .as("Elasticsearch index 'document' should contain at least one document after upload")
+                            .isGreaterThan(0L);
+                });
     }
 
     // -------------------------------------------------------------------------

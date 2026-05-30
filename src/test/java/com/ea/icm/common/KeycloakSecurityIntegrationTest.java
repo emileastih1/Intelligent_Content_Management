@@ -50,7 +50,7 @@ class KeycloakSecurityIntegrationTest {
 
     @Container
     static ElasticsearchContainer elasticsearch =
-            new ElasticsearchContainer("docker.elastic.co/elasticsearch/elasticsearch:8.12.1")
+            new ElasticsearchContainer("docker.elastic.co/elasticsearch/elasticsearch:9.0.0")
                     .withEnv("xpack.security.enabled", "false");
 
     @Container
