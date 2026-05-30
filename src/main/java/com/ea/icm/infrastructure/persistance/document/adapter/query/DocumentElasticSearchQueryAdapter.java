@@ -7,11 +7,13 @@ import com.ea.icm.domain.exception.MessageCode;
 import com.ea.icm.infrastructure.persistance.document.adapter.DocumentInfrastructureMapper;
 import com.ea.icm.infrastructure.persistance.document.model.DocumentElasticEntity;
 import com.ea.icm.infrastructure.repository.document.DocumentESConnectorRepository;
+import com.ea.icm.infrastructure.repository.document.DocumentJpaRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.List;
 
 @Service
 public class DocumentElasticSearchQueryAdapter implements DocumentDomainQueryServicePort {
@@ -20,12 +22,24 @@ public class DocumentElasticSearchQueryAdapter implements DocumentDomainQuerySer
 
     DocumentESConnectorRepository documentESConnectorRepository;
     DocumentInfrastructureMapper documentInfrastructureMapper;
+    DocumentJpaRepository documentJpaRepository;
 
 
     public DocumentElasticSearchQueryAdapter(DocumentESConnectorRepository documentESConnectorRepository,
-                                             DocumentInfrastructureMapper documentInfrastructureMapper) {
+                                             DocumentInfrastructureMapper documentInfrastructureMapper,
+                                             DocumentJpaRepository documentJpaRepository) {
         this.documentESConnectorRepository = documentESConnectorRepository;
         this.documentInfrastructureMapper = documentInfrastructureMapper;
+        this.documentJpaRepository = documentJpaRepository;
+    }
+
+    @Override
+    public List<DocumentAggregate> list() {
+        // Content-first Documents are the source of truth in PostgreSQL (incl. editable text content),
+        // so listing reads from JPA rather than the Elasticsearch projection.
+        return documentJpaRepository.findAll().stream()
+                .map(documentInfrastructureMapper::jpaEntityToDomain)
+                .toList();
     }
 
     @Override

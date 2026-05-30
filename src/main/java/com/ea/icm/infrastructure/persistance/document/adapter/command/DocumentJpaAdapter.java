@@ -31,19 +31,23 @@ public class DocumentJpaAdapter implements DocumentDomainJpaServicePort {
 
     @Override
     public long addDocument(DocumentAggregate documentAggregate) {
-        //Create the command to index the document
-        DocumentFileCommand documentFileCommand = new DocumentFileCommand(
-                0L,
-                StringUtils.EMPTY,
-                documentAggregate.getDocumentName(),
-                documentAggregate.getDocumentType().toString(),
-                documentAggregate.getFile(),
-                null
-        );
-        //Create the indexation event by applying the command to the aggregate
-        documentAggregate.indexDocument(documentFileCommand);
-        //Save the document to the vector store (event registered on aggregate)
-        documentAggregate.sendDocumentToEventStore(documentFileCommand);
+        // The upload ingestion path provides a file: index it and send it to the vector store.
+        // The authoring ingestion path provides only text content (no file), so those
+        // file-based events are skipped here (ADR-0004 content-first Document).
+        if (documentAggregate.getFile() != null) {
+            DocumentFileCommand documentFileCommand = new DocumentFileCommand(
+                    0L,
+                    StringUtils.EMPTY,
+                    documentAggregate.getDocumentName(),
+                    documentAggregate.getDocumentType() != null ? documentAggregate.getDocumentType().toString() : null,
+                    documentAggregate.getFile(),
+                    null
+            );
+            //Create the indexation event by applying the command to the aggregate
+            documentAggregate.indexDocument(documentFileCommand);
+            //Save the document to the vector store (event registered on aggregate)
+            documentAggregate.sendDocumentToEventStore(documentFileCommand);
+        }
 
         // Persist JPA entity mapped from domain aggregate
         DocumentEntity entity = documentInfrastructureMapper.domainToJpaEntity(documentAggregate);

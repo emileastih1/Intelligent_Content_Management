@@ -25,6 +25,9 @@ public class DocumentEntity {
     @Column(name = "CONTENT")
     private byte[] content;
 
+    @Column(name = "TEXT_CONTENT")
+    private String textContent;
+
     @Column(name = "FILE_SIZE")
     private String fileSize;
 

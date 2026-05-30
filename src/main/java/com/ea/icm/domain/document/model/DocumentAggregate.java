@@ -44,6 +44,9 @@ public class DocumentAggregate extends AbstractAggregateRoot<DocumentAggregate> 
     @Column(name = "CONTENT")
     private byte[] file;
 
+    @Column(name = "TEXT_CONTENT")
+    private String content;
+
     @Transient
     private String owner;
 

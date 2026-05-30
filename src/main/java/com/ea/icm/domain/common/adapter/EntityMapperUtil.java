@@ -36,6 +36,11 @@ public interface EntityMapperUtil {
     default FileSize map(String fileSize) {
         if (fileSize != null) {
             var fileSizeSplit = fileSize.split(" ");
+            // Guard against malformed / space-less values (e.g. authored documents that
+            // have no file size, which round-trip as "0"): treat them as no file size.
+            if (fileSizeSplit.length < 2) {
+                return null;
+            }
             return new FileSize(fileSizeSplit[0], UnitOfMeasurement.valueOf(fileSizeSplit[1]));
         } else {
             return null;

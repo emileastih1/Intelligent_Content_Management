@@ -5,6 +5,8 @@ import com.ea.icm.domain.document.model.DocumentAggregate;
 import com.ea.icm.domain.document.repository.query.DocumentDomainQueryServicePort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class DocumentManagementQueryServiceImpl implements DocumentManagementQueryService {
     DocumentDomainQueryServicePort documentDomainQueryServicePort;
@@ -16,6 +18,11 @@ public class DocumentManagementQueryServiceImpl implements DocumentManagementQue
     @Override
     public DocumentAggregate findDocumentById(String id) {
         return documentDomainQueryServicePort.retrieveDocumentById(id);
+    }
+
+    @Override
+    public List<DocumentAggregate> listDocuments() {
+        return documentDomainQueryServicePort.list();
     }
 
     @Override

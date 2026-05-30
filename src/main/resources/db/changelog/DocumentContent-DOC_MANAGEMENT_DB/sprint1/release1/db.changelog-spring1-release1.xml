@@ -64,6 +64,16 @@
         />
     </changeSet>
 
+    <!-- Change Set for content-first Document: add editable text content column (ADR-0004) -->
+    <changeSet id="add-document-text-content" author="eas" failOnError="true">
+        <comment>add TEXT_CONTENT column to document for content-first editable text</comment>
+        <sqlFile
+                path="db/changelog/DocumentContent-DOC_MANAGEMENT_DB/sprint1/release1/model/DOCUMENT-add-text-content.sql"
+                splitStatements="true"
+                stripComments="true"
+        />
+    </changeSet>
+
     <changeSet id="grant_all_privileges" author="eas" failOnError="true">
         <validCheckSum>ANY</validCheckSum>
         <comment>grant all privileges to postgres</comment>

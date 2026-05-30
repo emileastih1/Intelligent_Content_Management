@@ -23,6 +23,7 @@ public interface DocumentInfrastructureMapper extends EntityMapperUtil {
     // JPA mapping
     @Mapping(target = "name", source = "documentName")
     @Mapping(target = "content", source = "file")
+    @Mapping(target = "textContent", source = "content")
     @Mapping(target = "fileSize", source = "fileSize", qualifiedByName = "mapFileSizeToString")
     @Mapping(target = "creationDate", source = "creationDate")
     @Mapping(target = "modificationDate", source = "modificationDate")
@@ -30,6 +31,7 @@ public interface DocumentInfrastructureMapper extends EntityMapperUtil {
 
     @Mapping(target = "documentName", source = "name")
     @Mapping(target = "file", source = "content")
+    @Mapping(target = "content", source = "textContent")
     @Mapping(target = "fileSize", source = "fileSize", qualifiedByName = "mapStringToFileSize")
     @Mapping(target = "creationDate", source = "creationDate")
     @Mapping(target = "modificationDate", source = "modificationDate")

@@ -407,6 +407,51 @@ class DocumentRagIntegrationTest {
     }
 
     // -------------------------------------------------------------------------
+    // Cycle 7: content-first authoring — author a Document (content, no file)
+    //          then GET list returns it with its content (slice #69)
+    // -------------------------------------------------------------------------
+
+    @Test
+    @DisplayName("Author a Document (content, no file) then GET list returns it with its content")
+    void authorDocumentThenListReturnsItWithContent() {
+        String writeToken = obtainToken("user-write", "password");
+        String readToken = obtainToken("user-read", "password");
+
+        RestClient restClient = RestClient.create();
+
+        // Author a content-first Document: content provided directly, no base64File
+        ResponseEntity<String> createResponse = restClient.post()
+                .uri("http://localhost:" + port + "/idm/api/v1/document")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + writeToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("{\"name\":\"My Note\",\"content\":\"hello world\"}")
+                .retrieve()
+                .onStatus(status -> true, (req, res) -> {})
+                .toEntity(String.class);
+
+        assertThat(createResponse.getStatusCode().value())
+                .as("Authoring a content-first document should return 200. Body: " + createResponse.getBody())
+                .isEqualTo(HttpStatus.OK.value());
+
+        // The list endpoint returns the authored document, including its content
+        ResponseEntity<String> listResponse = restClient.get()
+                .uri("http://localhost:" + port + "/idm/api/v1/document")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + readToken)
+                .retrieve()
+                .onStatus(status -> true, (req, res) -> {})
+                .toEntity(String.class);
+
+        assertThat(listResponse.getStatusCode().value())
+                .as("Listing documents should return 200. Body: " + listResponse.getBody())
+                .isEqualTo(HttpStatus.OK.value());
+
+        assertThat(listResponse.getBody())
+                .as("List should contain the authored document's name and content")
+                .contains("My Note")
+                .contains("hello world");
+    }
+
+    // -------------------------------------------------------------------------
     // Helpers
     // -------------------------------------------------------------------------
 
