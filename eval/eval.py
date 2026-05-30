@@ -130,6 +130,41 @@ def check_keywords(
     return len(missing) == 0
 
 
+def _check(answer: str, must_contain: List[str]):
+    """Return (ok: bool, missing: list[str]) — case-insensitive keyword check.
+
+    Convenience wrapper around check_keywords that always returns both the
+    pass/fail boolean and the list of missing keywords as a 2-tuple.
+    """
+    missing = check_keywords(answer, must_contain, return_missing=True)
+    return len(missing) == 0, missing
+
+
+def _run_judge_dimension(
+    entries: list,
+    answers: dict,
+    dimension: str,
+    judge_fn,
+) -> float:
+    """Score all entries that have `dimension` in eval_dimensions using judge_fn.
+
+    Returns the average score for that dimension (0.0 if no entries match).
+    """
+    relevant = [e for e in entries if dimension in e.get("eval_dimensions", ["factual"])]
+    if not relevant:
+        return 0.0
+    scores = []
+    for entry in relevant:
+        answer = answers.get(entry["id"], "")
+        result = judge_fn(
+            question=entry["question"],
+            gold_answer=entry.get("gold_answer", ""),
+            model_answer=answer,
+        )
+        scores.append(result[dimension])
+    return sum(scores) / len(scores)
+
+
 # ---------------------------------------------------------------------------
 # Evaluation runner
 # ---------------------------------------------------------------------------
