@@ -1,12 +1,15 @@
 """
 eval.py — Factual-extraction evaluation script for the ICM RAG pipeline.
 
-Uploads a CV document, waits for async indexing, then asks 8 ground-truth
-questions and checks each answer for required keywords.
+Uploads a CV document, waits for async indexing, then asks ground-truth
+questions and checks answers for required keywords (factual) and/or scores
+answers using an LLM judge (synthesis, completeness).
 
 Usage:
     python eval/eval.py [--topk N] [--temperature F] [--sleep S]
                         [--icm-url URL] [--keycloak-url URL]
+                        [--mode factual|synthesis|completeness|all]
+                        [--judge-model MODEL] [--pass-threshold F]
 """
 
 import argparse
@@ -16,7 +19,7 @@ import os
 import sys
 import time
 from pathlib import Path
-from typing import List, Union
+from typing import Callable, List, Optional, Union
 
 import requests
 
@@ -132,19 +135,49 @@ def check_keywords(
 # ---------------------------------------------------------------------------
 
 
+def _load_judge_fn() -> Callable:
+    """Lazily import and return the judge function from judge.py."""
+    import sys as _sys
+    eval_dir = str(Path(__file__).parent)
+    if eval_dir not in _sys.path:
+        _sys.path.insert(0, eval_dir)
+    from judge import judge  # noqa: PLC0415
+    return judge
+
+
 def run_eval(
     icm_url: str,
     keycloak_url: str,
     top_k: int,
     temperature: float,
     sleep_seconds: int,
+    mode: str = "factual",
+    judge_model: str = "gemma3:4b",
+    pass_threshold: float = 0.7,
+    judge_fn: Optional[Callable] = None,
 ) -> int:
     """
     Run the full evaluation pipeline.
 
-    Returns the number of failed questions (0 = all pass).
+    Parameters
+    ----------
+    mode:           factual | synthesis | completeness | all
+    judge_model:    Ollama model to use for LLM judging (synthesis/completeness)
+    pass_threshold: Minimum average score for synthesis/completeness dimensions
+    judge_fn:       Injectable judge callable (default: loads from judge.py)
+
+    Returns the number of failures (0 = all pass).
+    Non-zero if any factual keyword fails OR any LLM dim avg < pass_threshold.
     """
     ground_truth = json.loads(GROUND_TRUTH_PATH.read_text(encoding="utf-8"))
+
+    run_factual = mode in ("factual", "all")
+    run_synthesis = mode in ("synthesis", "all")
+    run_completeness = mode in ("completeness", "all")
+
+    # Lazily resolve judge only when needed to avoid import errors in factual-only runs
+    if (run_synthesis or run_completeness) and judge_fn is None:
+        judge_fn = _load_judge_fn()
 
     # --- Upload step ---
     print("Obtaining WRITE token …")
@@ -170,38 +203,123 @@ def run_eval(
     print("Obtaining READ token …")
     read_token = get_token(keycloak_url, username=READ_USER, password=USER_PASSWORD)
 
-    passed = 0
-    failed = 0
-    total = len(ground_truth)
+    # Factual tracking
+    factual_passed = 0
+    factual_failed = 0
+    factual_total = 0
+
+    # LLM-judge tracking
+    synthesis_scores: List[float] = []
+    completeness_scores: List[float] = []
 
     print()
-    for entry in ground_truth:
-        qid = entry["id"]
-        question = entry["question"]
-        keywords = entry["keywords"]
 
+    # Collect entries for each active dimension
+    factual_entries = []
+    synthesis_entries = []
+    completeness_entries = []
+
+    for entry in ground_truth:
+        dims = entry.get("eval_dimensions", ["factual"])
+        if run_factual and "factual" in dims:
+            factual_entries.append(entry)
+        if run_synthesis and "synthesis" in dims:
+            synthesis_entries.append(entry)
+        if run_completeness and "completeness" in dims:
+            completeness_entries.append(entry)
+
+    # Deduplicate entries for ask (same entry may be asked multiple times for different dims)
+    # But each entry needs exactly one /ask call; we may reuse answers across dims
+    entries_to_ask: dict = {}
+    for entry in factual_entries + synthesis_entries + completeness_entries:
+        entries_to_ask[entry["id"]] = entry
+
+    answers: dict = {}
+    for entry in entries_to_ask.values():
         answer = ask_question(
             icm_url=icm_url,
             token=read_token,
-            question=question,
+            question=entry["question"],
             top_k=top_k,
             temperature=temperature,
         )
+        answers[entry["id"]] = answer
 
-        missing = check_keywords(answer, keywords, return_missing=True)
-        if not missing:
-            print(f"  PASS  [{qid}] {question}")
-            passed += 1
-        else:
-            print(f"  FAIL  [{qid}] {question}")
-            print(f"        Missing keywords: {missing}")
-            print(f"        Answer: {answer[:200]}")
-            failed += 1
+    # --- Factual evaluation ---
+    if run_factual:
+        factual_total = len(factual_entries)
+        for entry in factual_entries:
+            qid = entry["id"]
+            question = entry["question"]
+            keywords = entry["keywords"]
+            answer = answers[qid]
+            missing = check_keywords(answer, keywords, return_missing=True)
+            if not missing:
+                print(f"  PASS  [{qid}] {question}")
+                factual_passed += 1
+            else:
+                print(f"  FAIL  [{qid}] {question}")
+                print(f"        Missing keywords: {missing}")
+                print(f"        Answer: {answer[:200]}")
+                factual_failed += 1
 
+    # --- Synthesis evaluation ---
+    if run_synthesis:
+        for entry in synthesis_entries:
+            qid = entry["id"]
+            question = entry["question"]
+            gold_answer = entry.get("gold_answer", "")
+            answer = answers[qid]
+            result = judge_fn(
+                question=question,
+                gold_answer=gold_answer,
+                model_answer=answer,
+                model=judge_model,
+            )
+            score = result.get("synthesis", 0.0)
+            synthesis_scores.append(score)
+            print(f"  JUDGE [{qid}] synthesis={score:.2f} — {question[:60]}")
+
+    # --- Completeness evaluation ---
+    if run_completeness:
+        for entry in completeness_entries:
+            qid = entry["id"]
+            question = entry["question"]
+            gold_answer = entry.get("gold_answer", "")
+            answer = answers[qid]
+            result = judge_fn(
+                question=question,
+                gold_answer=gold_answer,
+                model_answer=answer,
+                model=judge_model,
+            )
+            score = result.get("completeness", 0.0)
+            completeness_scores.append(score)
+            print(f"  JUDGE [{qid}] completeness={score:.2f} — {question[:60]}")
+
+    # --- Final report ---
     print()
-    score_pct = int(passed / total * 100)
-    print(f"Score: {passed}/{total} ({score_pct}%)")
-    return failed
+    score_parts: List[str] = []
+    total_failures = factual_failed
+
+    if run_factual and factual_total > 0:
+        pct = int(factual_passed / factual_total * 100)
+        score_parts.append(f"factual {factual_passed}/{factual_total} ({pct}%)")
+
+    if run_synthesis and synthesis_scores:
+        avg = sum(synthesis_scores) / len(synthesis_scores)
+        score_parts.append(f"synthesis {avg:.2f} avg")
+        if avg < pass_threshold:
+            total_failures += 1
+
+    if run_completeness and completeness_scores:
+        avg = sum(completeness_scores) / len(completeness_scores)
+        score_parts.append(f"completeness {avg:.2f} avg")
+        if avg < pass_threshold:
+            total_failures += 1
+
+    print("Score: " + " | ".join(score_parts))
+    return total_failures
 
 
 # ---------------------------------------------------------------------------
@@ -211,7 +329,7 @@ def run_eval(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Evaluate ICM RAG pipeline factual-extraction accuracy."
+        description="Evaluate ICM RAG pipeline accuracy (factual, synthesis, completeness)."
     )
     parser.add_argument("--topk", type=int, default=2, help="topK for /ask (default 2)")
     parser.add_argument(
@@ -229,6 +347,23 @@ def main() -> None:
     parser.add_argument(
         "--keycloak-url", default="http://localhost:8180", help="Keycloak base URL"
     )
+    parser.add_argument(
+        "--mode",
+        choices=["factual", "synthesis", "completeness", "all"],
+        default="factual",
+        help="Evaluation mode (default: factual)",
+    )
+    parser.add_argument(
+        "--judge-model",
+        default="gemma3:4b",
+        help="Ollama model for LLM judge (default: gemma3:4b)",
+    )
+    parser.add_argument(
+        "--pass-threshold",
+        type=float,
+        default=0.7,
+        help="Minimum average score for synthesis/completeness to pass (default: 0.7)",
+    )
 
     args = parser.parse_args()
 
@@ -238,6 +373,9 @@ def main() -> None:
         top_k=args.topk,
         temperature=args.temperature,
         sleep_seconds=args.sleep,
+        mode=args.mode,
+        judge_model=args.judge_model,
+        pass_threshold=args.pass_threshold,
     )
     sys.exit(0 if failures == 0 else 1)
 

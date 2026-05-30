@@ -310,3 +310,149 @@ class TestCheckKeywords:
         answer = "Alex knows Java only."
         missing = check_keywords(answer, ["Java", "Python", "SQL"], return_missing=True)
         assert set(missing) == {"Python", "SQL"}
+
+
+# ---------------------------------------------------------------------------
+# run_eval mode tests (new — issue #62)
+# ---------------------------------------------------------------------------
+
+
+class TestRunEvalModes:
+    """Tests for --mode factual/synthesis/completeness/all behavior."""
+
+    def _make_ask_mock(self, answer="Alex knows Java, Python, SQL."):
+        """Return a mock requests.post that simulates /ask and /token responses."""
+        mock = MagicMock()
+        mock.return_value.raise_for_status = MagicMock()
+        mock.return_value.json.side_effect = [
+            # get_token (write)
+            {"access_token": "write-tok"},
+            # upload_document
+            {"id": "doc-1"},
+            # get_token (read)
+            {"access_token": "read-tok"},
+        ] + [{"answer": answer}] * 20  # up to 20 ask calls
+        return mock
+
+    def test_mode_factual_is_default(self):
+        """run_eval() in factual mode (default) never calls the judge function."""
+        from eval import run_eval
+
+        judge_mock = MagicMock()
+
+        with patch("eval.requests.post", self._make_ask_mock()), \
+             patch("eval.time.sleep"), \
+             patch("eval.CV_PATH") as mock_cv:
+            mock_cv.read_bytes.return_value = b"fake-cv"
+            mock_cv.name = "cv.txt"
+
+            run_eval(
+                icm_url=ICM_URL,
+                keycloak_url=KEYCLOAK_URL,
+                top_k=2,
+                temperature=0.7,
+                sleep_seconds=0,
+                mode="factual",
+                judge_fn=judge_mock,
+            )
+
+        judge_mock.assert_not_called()
+
+    def test_mode_synthesis_calls_judge_for_synthesis_entries(self):
+        """run_eval(mode='synthesis') calls judge() exactly 4 times for S1–S4 entries."""
+        from eval import run_eval
+
+        judge_mock = MagicMock(return_value={"synthesis": 0.8, "completeness": 0.8, "reasoning": "ok"})
+
+        with patch("eval.requests.post", self._make_ask_mock()), \
+             patch("eval.time.sleep"), \
+             patch("eval.CV_PATH") as mock_cv:
+            mock_cv.read_bytes.return_value = b"fake-cv"
+            mock_cv.name = "cv.txt"
+
+            run_eval(
+                icm_url=ICM_URL,
+                keycloak_url=KEYCLOAK_URL,
+                top_k=2,
+                temperature=0.7,
+                sleep_seconds=0,
+                mode="synthesis",
+                judge_fn=judge_mock,
+            )
+
+        assert judge_mock.call_count == 4
+
+    def test_mode_completeness_calls_judge_for_completeness_entries(self):
+        """run_eval(mode='completeness') calls judge() exactly 4 times for C1–C4 entries."""
+        from eval import run_eval
+
+        judge_mock = MagicMock(return_value={"synthesis": 0.8, "completeness": 0.8, "reasoning": "ok"})
+
+        with patch("eval.requests.post", self._make_ask_mock()), \
+             patch("eval.time.sleep"), \
+             patch("eval.CV_PATH") as mock_cv:
+            mock_cv.read_bytes.return_value = b"fake-cv"
+            mock_cv.name = "cv.txt"
+
+            run_eval(
+                icm_url=ICM_URL,
+                keycloak_url=KEYCLOAK_URL,
+                top_k=2,
+                temperature=0.7,
+                sleep_seconds=0,
+                mode="completeness",
+                judge_fn=judge_mock,
+            )
+
+        assert judge_mock.call_count == 4
+
+    def test_pass_threshold_causes_nonzero_exit_when_below(self):
+        """run_eval returns non-zero failures indicator when synthesis avg < pass_threshold."""
+        from eval import run_eval
+
+        # Judge returns synthesis score of 0.5
+        judge_mock = MagicMock(return_value={"synthesis": 0.5, "completeness": 0.5, "reasoning": "poor"})
+
+        with patch("eval.requests.post", self._make_ask_mock()), \
+             patch("eval.time.sleep"), \
+             patch("eval.CV_PATH") as mock_cv:
+            mock_cv.read_bytes.return_value = b"fake-cv"
+            mock_cv.name = "cv.txt"
+
+            result = run_eval(
+                icm_url=ICM_URL,
+                keycloak_url=KEYCLOAK_URL,
+                top_k=2,
+                temperature=0.7,
+                sleep_seconds=0,
+                mode="synthesis",
+                judge_fn=judge_mock,
+                pass_threshold=0.7,
+            )
+
+        # failures > 0 means exit code should be non-zero
+        assert result > 0
+
+    def test_mode_all_runs_all_three_dimensions(self):
+        """run_eval(mode='all') runs factual keyword checks AND calls judge 8 times (4 synthesis + 4 completeness)."""
+        from eval import run_eval
+
+        judge_mock = MagicMock(return_value={"synthesis": 0.8, "completeness": 0.8, "reasoning": "ok"})
+
+        with patch("eval.requests.post", self._make_ask_mock("Java Python SQL 6 Senior Software Engineer TechCorp DataSoft 2018 2021 MSc Edinburgh BSc Glasgow AWS Solutions Architect 2022 CKA Kubernetes 2023")), \
+             patch("eval.time.sleep"), \
+             patch("eval.CV_PATH") as mock_cv:
+            mock_cv.read_bytes.return_value = b"fake-cv"
+            mock_cv.name = "cv.txt"
+
+            run_eval(
+                icm_url=ICM_URL,
+                keycloak_url=KEYCLOAK_URL,
+                top_k=2,
+                temperature=0.7,
+                sleep_seconds=0,
+                mode="all",
+                judge_fn=judge_mock,
+            )
+
+        assert judge_mock.call_count == 8
