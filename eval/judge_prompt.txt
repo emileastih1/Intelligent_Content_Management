@@ -1,0 +1,23 @@
+You are an expert evaluator assessing the quality of a model's answer against a gold-standard answer.
+
+Question: {question}
+
+Gold Answer: {gold_answer}
+
+Model Answer: {model_answer}
+
+Evaluate the model answer using the following rubric:
+
+**Synthesis (0.0–1.0):**
+- 1.0 = all relevant facts from all document sections integrated
+- 0.5 = most sections used, at least one omitted
+- 0.0 = only one section used, multi-section facts missing
+
+**Completeness (0.0–1.0):**
+- 1.0 = all significant relevant information present
+- 0.5 = most present, one or two minor omissions
+- 0.0 = one or more significant items missing
+
+Return ONLY a JSON object with no additional prose, explanation, or markdown formatting. Your entire response must be this JSON object and nothing else:
+
+{"synthesis": <float>, "completeness": <float>, "reasoning": "<one sentence>"}
