@@ -30,6 +30,9 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.awaitility.Awaitility;
 
@@ -346,6 +349,61 @@ class DocumentRagIntegrationTest {
                             .as("Elasticsearch index 'document' should contain at least one document after upload")
                             .isGreaterThan(0L);
                 });
+    }
+
+    // -------------------------------------------------------------------------
+    // Cycle 6: SSE streaming proxy — multi-token response preserved end-to-end
+    // -------------------------------------------------------------------------
+
+    @Test
+    @DisplayName("Ask question proxies multi-token SSE stream with [DONE] as final event")
+    void askQuestionProxiesMultiTokenSseStream() throws Exception {
+        wireMock.stubFor(post(urlPathEqualTo("/AiServiceClient/v1/document/ask"))
+                .withQueryParam("topK", equalTo("2"))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "text/event-stream")
+                        .withBody("data: The \n\ndata: candidate \n\ndata: has experience\n\ndata: [DONE]\n\n")));
+
+        String readToken = obtainToken("user-read", "password");
+
+        HttpClient httpClient = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:" + port + "/idm/api/v1/document/ask?topK=2"))
+                .header("Authorization", "Bearer " + readToken)
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(
+                        "{\"question\":\"What experience does the candidate have?\"}"))
+                .build();
+
+        HttpResponse<String> response = httpClient.send(
+                request, HttpResponse.BodyHandlers.ofString());
+
+        assertThat(response.statusCode())
+                .as("SSE ask should return 200")
+                .isEqualTo(200);
+
+        assertThat(response.headers().firstValue("Content-Type").orElse(""))
+                .as("Response must be SSE")
+                .contains("text/event-stream");
+
+        String body = response.body();
+        List<String> dataValues = Arrays.stream(body.split("\n"))
+                .filter(line -> line.startsWith("data:"))
+                .map(line -> line.substring("data:".length()).strip())
+                .collect(Collectors.toList());
+
+        assertThat(dataValues)
+                .as("Should receive 4 data events: 3 tokens + [DONE]")
+                .hasSizeGreaterThanOrEqualTo(4);
+
+        assertThat(String.join("", dataValues.subList(0, dataValues.size() - 1)))
+                .as("Concatenated tokens should contain 'candidate'")
+                .contains("candidate");
+
+        assertThat(dataValues.get(dataValues.size() - 1))
+                .as("[DONE] must be the final event")
+                .isEqualTo("[DONE]");
     }
 
     // -------------------------------------------------------------------------
