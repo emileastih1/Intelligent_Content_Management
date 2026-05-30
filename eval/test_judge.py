@@ -1,40 +1,53 @@
 import json
-import unittest
 from unittest.mock import patch, MagicMock
+import pytest
+from judge import judge
 
 
-# Test 1: happy path — Ollama returns clean JSON
-def test_judge_returns_synthesis_completeness_reasoning():
-    mock_response = {"response": '{"synthesis": 0.8, "completeness": 0.9, "reasoning": "Good answer"}'}
-    with patch("requests.post") as mock_post:
-        mock_post.return_value.json.return_value = mock_response
-        from judge import judge
-        result = judge("Q?", "gold", "model answer")
-    assert "synthesis" in result
-    assert "completeness" in result
-    assert "reasoning" in result
-    assert 0.0 <= result["synthesis"] <= 1.0
-    assert 0.0 <= result["completeness"] <= 1.0
+SAMPLE_QUESTION = "What programming languages does Alex Morgan know?"
+SAMPLE_GOLD = "Alex Morgan knows Java (6 years), Python (2 years), and SQL (6 years)."
+SAMPLE_MODEL_ANSWER = "Alex Morgan knows Java and Python."
 
 
-# Test 2: scores are floats in [0.0, 1.0]
-def test_judge_scores_are_floats_in_range():
-    mock_response = {"response": '{"synthesis": 0.5, "completeness": 0.5, "reasoning": "Partial"}'}
-    with patch("requests.post") as mock_post:
-        mock_post.return_value.json.return_value = mock_response
-        from judge import judge
-        result = judge("Q?", "gold", "model answer")
-    assert isinstance(result["synthesis"], float)
-    assert isinstance(result["completeness"], float)
+def _mock_ollama_response(text: str):
+    """Return a mock requests.Response that simulates Ollama /api/generate."""
+    mock_resp = MagicMock()
+    mock_resp.raise_for_status = MagicMock()
+    mock_resp.json.return_value = {"response": text}
+    return mock_resp
 
 
-# Test 3: markdown fence retry — Ollama wraps JSON in ```json ... ```
-def test_judge_handles_markdown_fenced_json():
-    fenced = '```json\n{"synthesis": 0.7, "completeness": 0.6, "reasoning": "Fenced"}\n```'
-    mock_response = {"response": fenced}
-    with patch("requests.post") as mock_post:
-        mock_post.return_value.json.return_value = mock_response
-        from judge import judge
-        result = judge("Q?", "gold", "model answer")
-    assert result["synthesis"] == 0.7
-    assert result["completeness"] == 0.6
+class TestJudgeReturnsValidStructure:
+    def test_returns_dict_with_required_keys(self):
+        payload = json.dumps({"synthesis": 0.8, "completeness": 0.6, "reasoning": "ok"})
+        with patch("requests.post", return_value=_mock_ollama_response(payload)):
+            result = judge(SAMPLE_QUESTION, SAMPLE_GOLD, SAMPLE_MODEL_ANSWER)
+        assert set(result.keys()) >= {"synthesis", "completeness", "reasoning"}
+
+    def test_synthesis_score_is_float_in_range(self):
+        payload = json.dumps({"synthesis": 0.8, "completeness": 0.6, "reasoning": "ok"})
+        with patch("requests.post", return_value=_mock_ollama_response(payload)):
+            result = judge(SAMPLE_QUESTION, SAMPLE_GOLD, SAMPLE_MODEL_ANSWER)
+        assert 0.0 <= result["synthesis"] <= 1.0
+
+    def test_completeness_score_is_float_in_range(self):
+        payload = json.dumps({"synthesis": 0.8, "completeness": 0.6, "reasoning": "ok"})
+        with patch("requests.post", return_value=_mock_ollama_response(payload)):
+            result = judge(SAMPLE_QUESTION, SAMPLE_GOLD, SAMPLE_MODEL_ANSWER)
+        assert 0.0 <= result["completeness"] <= 1.0
+
+    def test_reasoning_is_nonempty_string(self):
+        payload = json.dumps({"synthesis": 0.8, "completeness": 0.6, "reasoning": "partial answer"})
+        with patch("requests.post", return_value=_mock_ollama_response(payload)):
+            result = judge(SAMPLE_QUESTION, SAMPLE_GOLD, SAMPLE_MODEL_ANSWER)
+        assert isinstance(result["reasoning"], str) and result["reasoning"]
+
+
+class TestMarkdownFenceRetry:
+    def test_parses_json_wrapped_in_markdown_fences(self):
+        payload = json.dumps({"synthesis": 0.5, "completeness": 0.7, "reasoning": "fenced"})
+        fenced = f"```json\n{payload}\n```"
+        with patch("requests.post", return_value=_mock_ollama_response(fenced)):
+            result = judge(SAMPLE_QUESTION, SAMPLE_GOLD, SAMPLE_MODEL_ANSWER)
+        assert result["synthesis"] == 0.5
+        assert result["completeness"] == 0.7

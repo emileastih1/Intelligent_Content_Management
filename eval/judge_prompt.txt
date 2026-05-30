@@ -1,23 +1,22 @@
-You are an expert evaluator assessing the quality of a model's answer against a gold-standard answer.
+You are evaluating the quality of an AI assistant's answer to a question about a document.
 
-Question: {question}
+Score the answer on two dimensions and return JSON ONLY — no text before or after.
 
-Gold Answer: {gold_answer}
+SYNTHESIS (0.0 to 1.0): Does the answer correctly integrate information from multiple sections of the source document?
+- 1.0: All relevant facts from all sections are correctly integrated
+- 0.5: Most sections used; at least one relevant section omitted or incorrectly weighted
+- 0.0: Only one section used; multi-section facts missing or contradicted
 
-Model Answer: {model_answer}
+COMPLETENESS (0.0 to 1.0): Does the answer include all information relevant to the question?
+- 1.0: All significant relevant information is present
+- 0.5: Most information present; one or two minor omissions
+- 0.0: One or more significant items are missing
 
-Evaluate the model answer using the following rubric:
+QUESTION: {question}
 
-**Synthesis (0.0–1.0):**
-- 1.0 = all relevant facts from all document sections integrated
-- 0.5 = most sections used, at least one omitted
-- 0.0 = only one section used, multi-section facts missing
+GOLD ANSWER (reference): {gold_answer}
 
-**Completeness (0.0–1.0):**
-- 1.0 = all significant relevant information present
-- 0.5 = most present, one or two minor omissions
-- 0.0 = one or more significant items missing
+MODEL ANSWER (to evaluate): {model_answer}
 
-Return ONLY a JSON object with no additional prose, explanation, or markdown formatting. Your entire response must be this JSON object and nothing else:
-
-{"synthesis": <float>, "completeness": <float>, "reasoning": "<one sentence>"}
+Respond with valid JSON only:
+{{"synthesis": <0.0-1.0>, "completeness": <0.0-1.0>, "reasoning": "<one sentence>"}}
