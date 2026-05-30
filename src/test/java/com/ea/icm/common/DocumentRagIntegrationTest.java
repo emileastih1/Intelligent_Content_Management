@@ -247,13 +247,13 @@ class DocumentRagIntegrationTest {
         wireMock.stubFor(post(urlEqualTo("/AiServiceClient/v1/document"))
                 .willReturn(aResponse().withStatus(200)));
 
-        // Stub AI service: question answering
+        // Stub AI service: question answering (SSE streaming)
         wireMock.stubFor(post(urlPathEqualTo("/AiServiceClient/v1/document/ask"))
                 .withQueryParam("topK", equalTo("2"))
                 .willReturn(aResponse()
                         .withStatus(200)
-                        .withHeader("Content-Type", "application/json")
-                        .withBody("{\"answer\":\"The candidate has 3 years of manual and automation testing experience.\"}")));
+                        .withHeader("Content-Type", "text/event-stream")
+                        .withBody("data: The candidate has experience\n\ndata: [DONE]\n\n")));
 
         String writeToken = obtainToken("user-write", "password");
         String readToken = obtainToken("user-read", "password");
@@ -292,9 +292,12 @@ class DocumentRagIntegrationTest {
         assertThat(askResponse.getStatusCode().value())
                 .as("Ask question should return 200. Body: " + askResponse.getBody())
                 .isEqualTo(HttpStatus.OK.value());
+        assertThat(askResponse.getHeaders().getContentType().toString())
+                .as("Response content type should be text/event-stream")
+                .contains("text/event-stream");
         assertThat(askResponse.getBody())
-                .as("Response should contain an 'answer' field")
-                .contains("answer");
+                .as("Response should contain [DONE] sentinel")
+                .contains("[DONE]");
 
         wireMock.verify(postRequestedFor(urlPathEqualTo("/AiServiceClient/v1/document/ask"))
                 .withQueryParam("topK", equalTo("2")));

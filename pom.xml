@@ -71,6 +71,12 @@
             <artifactId>spring-boot-starter-restclient</artifactId>
         </dependency>
 
+        <!-- WebClient for streaming DMS ask proxy — servlet stack stays on Spring MVC -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webflux</artifactId>
+        </dependency>
+
         <!-- document repository -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
