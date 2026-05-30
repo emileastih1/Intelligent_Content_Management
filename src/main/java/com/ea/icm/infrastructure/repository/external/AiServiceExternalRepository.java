@@ -24,8 +24,8 @@ public class AiServiceExternalRepository {
         documentAiRestClient.sendToVectorStore(aggregate);
     }
 
-    public Answer askQuestion(Question question) {
+    public Answer askQuestion(Question question, int topK, Double temperature) {
         LOGGER.info("AiServiceExternalRepository.askQuestion question: " + question);
-        return documentAiRestClient.askQuestion(question);
+        return documentAiRestClient.askQuestion(question, topK, temperature);
     }
 }

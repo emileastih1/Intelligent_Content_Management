@@ -16,7 +16,7 @@ public class DocumentAiQueryServiceClientCommandAdapter implements AiServiceClie
     }
 
     @Override
-    public Answer askQuestion(Question question) {
-        return aiServiceExternalRepository.askQuestion(question);
+    public Answer askQuestion(Question question, int topK, Double temperature) {
+        return aiServiceExternalRepository.askQuestion(question, topK, temperature);
     }
 }

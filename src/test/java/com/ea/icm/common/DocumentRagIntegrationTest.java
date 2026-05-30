@@ -243,7 +243,8 @@ class DocumentRagIntegrationTest {
                 .willReturn(aResponse().withStatus(200)));
 
         // Stub AI service: question answering
-        wireMock.stubFor(post(urlEqualTo("/AiServiceClient/v1/document/ask"))
+        wireMock.stubFor(post(urlPathEqualTo("/AiServiceClient/v1/document/ask"))
+                .withQueryParam("topK", equalTo("2"))
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json")
@@ -289,6 +290,9 @@ class DocumentRagIntegrationTest {
         assertThat(askResponse.getBody())
                 .as("Response should contain an 'answer' field")
                 .contains("answer");
+
+        wireMock.verify(postRequestedFor(urlPathEqualTo("/AiServiceClient/v1/document/ask"))
+                .withQueryParam("topK", equalTo("2")));
     }
 
     // -------------------------------------------------------------------------

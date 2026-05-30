@@ -15,7 +15,7 @@ public class AiServiceClientQueryImpl implements AiServiceClientQuery {
     }
 
     @Override
-    public Answer askQuestion(Question question) {
-        return aiServiceClientQueryPort.askQuestion(question);
+    public Answer askQuestion(Question question, int topK, Double temperature) {
+        return aiServiceClientQueryPort.askQuestion(question, topK, temperature);
     }
 }

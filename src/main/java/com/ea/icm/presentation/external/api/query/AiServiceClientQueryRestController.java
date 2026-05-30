@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -43,7 +44,10 @@ public class AiServiceClientQueryRestController extends BaseRestController {
     )
     @PreAuthorize("hasRole('READ')")
     @PostMapping(value = "/v1/document/ask", produces = "application/json")
-    public ResponseEntity<Answer> askQuestion(@RequestBody @Valid Question question) {
-        return new ResponseEntity<Answer>(aiServiceClientQuery.askQuestion(question), HttpStatus.OK);
+    public ResponseEntity<Answer> askQuestion(
+            @RequestBody @Valid Question question,
+            @RequestParam(defaultValue = "2") int topK,
+            @RequestParam(required = false) Double temperature) {
+        return new ResponseEntity<Answer>(aiServiceClientQuery.askQuestion(question, topK, temperature), HttpStatus.OK);
     }
 }

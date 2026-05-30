@@ -32,10 +32,14 @@ public class DocumentAiRestClient {
                 .toBodilessEntity();
     }
 
-    public Answer askQuestion(Question question) {
+    public Answer askQuestion(Question question, int topK, Double temperature) {
         LOGGER.info("DocumentAiRestClient.askQuestion question: " + question);
         return restClient.post()
-                .uri("/v1/document/ask")
+                .uri(uriBuilder -> {
+                    uriBuilder.path("/v1/document/ask").queryParam("topK", topK);
+                    if (temperature != null) { uriBuilder.queryParam("temperature", temperature); }
+                    return uriBuilder.build();
+                })
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(question)
                 .retrieve()

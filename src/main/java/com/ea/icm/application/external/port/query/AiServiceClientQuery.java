@@ -8,5 +8,5 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public interface AiServiceClientQuery {
-    Answer askQuestion(Question question);
+    Answer askQuestion(Question question, int topK, Double temperature);
 }
