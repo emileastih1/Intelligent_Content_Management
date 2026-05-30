@@ -20,7 +20,7 @@ A unit of textual content owned by a user. Its editable **content** is the first
 _Avoid_: File — a file is one way to seed a Document's content, not the Document itself.
 
 **Ingestion path**
-How a Document's content gets populated: either **authored** (typed directly) or **uploaded** (a file is provided and Tika extracts its text into the content). Both paths converge on the same content-first Document.
+How a Document's content gets populated: either **authored** (typed directly) or **uploaded** (a file is provided and Tika extracts its text into the content). Both paths converge on the same content-first Document. Once content is set, it is this `TEXT_CONTENT` — not the original file — that is sent to DMS for vector-store embedding.
 
 **DocumentAggregate**
 The root domain object representing a Document. Encapsulates identity, metadata, and the document's lifecycle state.
@@ -48,7 +48,7 @@ An AI-derived classification of a Document's content (e.g. Positive, Neutral, Cr
 _Avoid_: tone, mood.
 
 **DocumentEventProcessor**
-Handles domain events asynchronously: `DocumentUploadFileEvent` triggers Elasticsearch indexing; `DocumentSendToVectorStoreEvent` triggers the call to AiServiceClient.
+Handles domain events asynchronously: `DocumentUploadFileEvent` triggers Elasticsearch indexing; a content-embed event triggers the call to AiServiceClient with the document's `TEXT_CONTENT` (not the original file); `DocumentDeleteFromVectorStoreEvent` purges chunks from DMS; `DocumentClassifySentimentEvent` triggers AI sentiment classification.
 
 **Answer**
 The response value object returned from the AI microservice after a question-answering query.
