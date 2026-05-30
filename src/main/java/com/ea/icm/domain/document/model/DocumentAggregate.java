@@ -15,6 +15,8 @@ import org.springframework.util.Assert;
 
 import java.sql.Types;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * This is our document aggregate root
@@ -74,6 +76,12 @@ public class DocumentAggregate extends AbstractAggregateRoot<DocumentAggregate> 
                 documentFileCommand.file());
         DocumentUploadFileEvent documentUploadFileEvent = new DocumentUploadFileEvent(this, documentAttachment);
         this.registerEvent(documentUploadFileEvent);
+    }
+
+    public Collection<Object> pullDomainEvents() {
+        Collection<Object> events = new ArrayList<>(domainEvents());
+        clearDomainEvents();
+        return events;
     }
 
     public void sendDocumentToEventStore(DocumentFileCommand documentFileCommand) {

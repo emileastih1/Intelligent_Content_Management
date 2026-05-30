@@ -49,9 +49,7 @@ public class DocumentJpaAdapter implements DocumentDomainJpaServicePort {
         DocumentEntity entity = documentInfrastructureMapper.domainToJpaEntity(documentAggregate);
         long id = documentJpaRepository.save(entity).getId();
 
-        // Explicitly publish domain events registered on the aggregate (since we didn't save the aggregate itself)
-//        documentAggregate.domainEvents().forEach(applicationEventPublisher::publishEvent);
-//        documentAggregate.clearDomainEvents();
+        documentAggregate.pullDomainEvents().forEach(applicationEventPublisher::publishEvent);
 
         return id;
     }

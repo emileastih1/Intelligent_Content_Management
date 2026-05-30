@@ -3,6 +3,8 @@ package com.ea.icm.infrastructure.persistance.document.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.ZonedDateTime;
 
@@ -19,7 +21,7 @@ public class DocumentEntity {
     @Column(name = "NAME", nullable = false, length = 200)
     private String name;
 
-    @Lob
+    @JdbcTypeCode(SqlTypes.BINARY)
     @Column(name = "CONTENT")
     private byte[] content;
 
