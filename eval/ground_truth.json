@@ -2,41 +2,113 @@
   {
     "id": "Q1",
     "question": "What programming languages does Alex Morgan know?",
-    "keywords": ["Java", "Python", "SQL"]
+    "keywords": ["Java", "Python", "SQL"],
+    "gold_answer": "Alex Morgan knows Java, Python, and SQL.",
+    "eval_dimensions": ["factual"]
   },
   {
     "id": "Q2",
     "question": "How many years of Java experience does Alex Morgan have?",
-    "keywords": ["6"]
+    "keywords": ["6"],
+    "gold_answer": "Alex Morgan has 6 years of Java experience.",
+    "eval_dimensions": ["factual"]
   },
   {
     "id": "Q3",
     "question": "What is Alex Morgan's most recent job title?",
-    "keywords": ["Senior Software Engineer"]
+    "keywords": ["Senior Software Engineer"],
+    "gold_answer": "Alex Morgan's most recent job title is Senior Software Engineer.",
+    "eval_dimensions": ["factual"]
   },
   {
     "id": "Q4",
     "question": "When did Alex Morgan work at DataSoft Solutions?",
-    "keywords": ["2018", "2021", "DataSoft"]
+    "keywords": ["2018", "2021", "DataSoft"],
+    "gold_answer": "Alex Morgan worked at DataSoft Solutions from June 2018 to March 2021.",
+    "eval_dimensions": ["factual"]
   },
   {
     "id": "Q5",
     "question": "What degree does Alex Morgan hold and from which university?",
-    "keywords": ["MSc", "Edinburgh", "BSc", "Glasgow"]
+    "keywords": ["MSc", "Edinburgh", "BSc", "Glasgow"],
+    "gold_answer": "Alex Morgan holds an MSc in Computer Science from the University of Edinburgh and a BSc in Computer Science from the University of Glasgow.",
+    "eval_dimensions": ["factual"]
   },
   {
     "id": "Q6",
     "question": "How many years of professional experience does Alex Morgan have?",
-    "keywords": ["6"]
+    "keywords": ["6"],
+    "gold_answer": "Alex Morgan has 6 years of professional experience.",
+    "eval_dimensions": ["factual"]
   },
   {
     "id": "Q7",
     "question": "What AWS certifications does Alex Morgan hold?",
-    "keywords": ["AWS", "Solutions Architect", "2022"]
+    "keywords": ["AWS", "Solutions Architect", "2022"],
+    "gold_answer": "Alex Morgan holds the AWS Certified Solutions Architect – Associate certification (2022).",
+    "eval_dimensions": ["factual"]
   },
   {
     "id": "Q8",
     "question": "List all companies Alex Morgan has worked for.",
-    "keywords": ["TechCorp", "DataSoft"]
+    "keywords": ["TechCorp", "DataSoft"],
+    "gold_answer": "Alex Morgan has worked for TechCorp Ltd and DataSoft Solutions.",
+    "eval_dimensions": ["factual"]
+  },
+  {
+    "id": "S1",
+    "question": "How does Alex Morgan's educational background relate to his professional work?",
+    "keywords": ["MSc", "Edinburgh", "BSc", "Glasgow", "Senior Software Engineer", "TechCorp", "DataSoft"],
+    "gold_answer": "Alex Morgan's BSc Computer Science (First Class, University of Glasgow) and MSc Computer Science (Distinction, University of Edinburgh, dissertation on vector similarity search) directly underpin his career: he moved into a Software Engineer role at DataSoft Solutions immediately after his MSc, and his academic specialisation aligns with his professional work on distributed systems, data pipelines, and cloud-native architectures at TechCorp Ltd. His AWS SAA and CKA certifications further bridge the academic theory with practical cloud and Kubernetes delivery.",
+    "eval_dimensions": ["synthesis"]
+  },
+  {
+    "id": "S2",
+    "question": "What cloud-related skills and experience does Alex Morgan have?",
+    "keywords": ["AWS", "EC2", "S3", "RDS", "Lambda", "TechCorp", "migration", "Solutions Architect", "2022"],
+    "gold_answer": "Alex Morgan has strong cloud skills spanning AWS services (EC2, S3, RDS, Lambda) listed in his technical skills section, hands-on experience migrating on-premise services to AWS at TechCorp Ltd (achieving 99.95% uptime SLA), and formal recognition via his AWS Certified Solutions Architect – Associate certification (2022). He also uses Kubernetes and Helm for container orchestration, and Terraform for infrastructure-as-code.",
+    "eval_dimensions": ["synthesis"]
+  },
+  {
+    "id": "S3",
+    "question": "How many total years of professional experience does Alex Morgan have, and where?",
+    "keywords": ["TechCorp", "3", "DataSoft", "2", "9", "5"],
+    "gold_answer": "Alex Morgan has approximately 5 years and 9 months of total professional experience across two employers: 3 years at TechCorp Ltd (April 2021 – present) as Senior Software Engineer, and 2 years 9 months at DataSoft Solutions (June 2018 – March 2021) as Software Engineer.",
+    "eval_dimensions": ["synthesis"]
+  },
+  {
+    "id": "S4",
+    "question": "What testing technologies has Alex Morgan used and where?",
+    "keywords": ["JUnit", "Mockito", "Testcontainers", "DataSoft", "CI/CD", "integration tests"],
+    "gold_answer": "Alex Morgan's testing technologies include JUnit 5, Mockito, and Testcontainers (listed in his skills). At DataSoft Solutions he applied Testcontainers to parallelise test suites, reducing CI/CD pipeline build times from 18 minutes to 4 minutes, and wrote comprehensive integration tests covering 85% of the service layer.",
+    "eval_dimensions": ["synthesis"]
+  },
+  {
+    "id": "C1",
+    "question": "List all of Alex Morgan's certifications.",
+    "keywords": ["AWS", "Solutions Architect", "2022", "CKA", "Kubernetes", "2023"],
+    "gold_answer": "Alex Morgan holds two certifications: AWS Certified Solutions Architect – Associate (2022) and Certified Kubernetes Administrator (CKA) (2023).",
+    "eval_dimensions": ["completeness"]
+  },
+  {
+    "id": "C2",
+    "question": "What programming languages does Alex Morgan know and for how long?",
+    "keywords": ["Java", "6", "Python", "2", "SQL"],
+    "gold_answer": "Alex Morgan knows Java (6 years), Python (2 years), and SQL (6 years).",
+    "eval_dimensions": ["completeness"]
+  },
+  {
+    "id": "C3",
+    "question": "List all of Alex Morgan's employers.",
+    "keywords": ["TechCorp", "DataSoft"],
+    "gold_answer": "Alex Morgan has worked for two employers: TechCorp Ltd (Senior Software Engineer, April 2021 – present) and DataSoft Solutions (Software Engineer, June 2018 – March 2021).",
+    "eval_dimensions": ["completeness"]
+  },
+  {
+    "id": "C4",
+    "question": "What degrees does Alex Morgan hold?",
+    "keywords": ["MSc", "Computer Science", "Edinburgh", "Distinction", "BSc", "Glasgow", "First Class"],
+    "gold_answer": "Alex Morgan holds an MSc in Computer Science from the University of Edinburgh (Distinction) and a BSc in Computer Science from the University of Glasgow (First Class Honours).",
+    "eval_dimensions": ["completeness"]
   }
 ]
