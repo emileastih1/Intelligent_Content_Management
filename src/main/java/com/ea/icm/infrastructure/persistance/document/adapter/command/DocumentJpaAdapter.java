@@ -124,11 +124,16 @@ public class DocumentJpaAdapter implements DocumentDomainJpaServicePort {
         DocumentAggregate updated = documentInfrastructureMapper.jpaEntityToDomain(saved);
 
         if (documentAggregate.getContent() != null) {
+            String newContent = documentAggregate.getContent();
             // Re-index in Elasticsearch (ADR-0004)
             applicationEventPublisher.publishEvent(new DocumentUploadFileEvent(updated, null));
+            // Delete old chunks then re-embed with new content (ADR-0007)
+            applicationEventPublisher.publishEvent(new DocumentDeleteFromVectorStoreEvent(id));
+            applicationEventPublisher.publishEvent(
+                    new DocumentEmbedContentEvent(id, updated.getDocumentName(), newContent));
             // Re-classify sentiment for updated content (ADR-0007)
             applicationEventPublisher.publishEvent(
-                    new DocumentClassifySentimentEvent(id, documentAggregate.getContent()));
+                    new DocumentClassifySentimentEvent(id, newContent));
         }
 
         return updated;

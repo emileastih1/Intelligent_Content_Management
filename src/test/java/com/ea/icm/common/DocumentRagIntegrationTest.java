@@ -931,6 +931,69 @@ class DocumentRagIntegrationTest {
     }
 
     // -------------------------------------------------------------------------
+    // Cycle 15: re-embed on edit — editing content fires delete-then-embed-content
+    //           so chat reflects the updated text (ADR-0004, ADR-0007, slice #90)
+    // -------------------------------------------------------------------------
+
+    @Test
+    @DisplayName("Editing document content fires delete-then-embed-content to DMS")
+    void editDocumentContentFiresDeleteThenEmbedContent() {
+        // Stub all three DMS calls that may fire
+        wireMock.stubFor(post(urlEqualTo("/AiServiceClient/v1/document/embed-content"))
+                .willReturn(aResponse().withStatus(200)));
+        wireMock.stubFor(delete(urlMatching("/AiServiceClient/v1/document/\\d+"))
+                .willReturn(aResponse().withStatus(200)));
+        wireMock.stubFor(post(urlEqualTo("/AiServiceClient/v1/document"))
+                .willReturn(aResponse().withStatus(200)));
+
+        String writeToken = obtainToken("user-write", "password");
+        RestClient restClient = RestClient.create();
+
+        // Create a document first
+        ResponseEntity<String> createResponse = restClient.post()
+                .uri("http://localhost:" + port + "/idm/api/v1/document")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + writeToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("{\"name\":\"Edit Me\",\"content\":\"original content\"}")
+                .retrieve()
+                .onStatus(status -> true, (req, res) -> {})
+                .toEntity(String.class);
+
+        assertThat(createResponse.getStatusCode().value()).isEqualTo(200);
+        String docId = extractJsonField(createResponse.getBody(), "id");
+
+        // Reset WireMock so we only count calls from the edit below
+        wireMock.resetRequests();
+
+        // Edit the content
+        ResponseEntity<String> updateResponse = restClient.put()
+                .uri("http://localhost:" + port + "/idm/api/v1/document/" + docId)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + writeToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("{\"name\":\"Edit Me\",\"content\":\"updated content after edit\"}")
+                .retrieve()
+                .onStatus(status -> true, (req, res) -> {})
+                .toEntity(String.class);
+
+        assertThat(updateResponse.getStatusCode().value())
+                .as("PUT update should return 200. Body: " + updateResponse.getBody())
+                .isEqualTo(200);
+
+        // DMS delete must fire (purge old chunks)
+        Awaitility.await().atMost(5, java.util.concurrent.TimeUnit.SECONDS)
+                .untilAsserted(() ->
+                        wireMock.verify(deleteRequestedFor(
+                                urlMatching("/AiServiceClient/v1/document/\\d+"))));
+
+        // DMS embed-content must fire with the new content
+        Awaitility.await().atMost(5, java.util.concurrent.TimeUnit.SECONDS)
+                .untilAsserted(() ->
+                        wireMock.verify(postRequestedFor(
+                                urlEqualTo("/AiServiceClient/v1/document/embed-content"))
+                                .withRequestBody(containing("updated content after edit"))));
+    }
+
+    // -------------------------------------------------------------------------
     // Helpers
     // -------------------------------------------------------------------------
 
