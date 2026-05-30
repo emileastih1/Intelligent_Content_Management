@@ -25,4 +25,15 @@ public class DocumentAiQueryServiceClientCommandAdapter implements AiServiceClie
     public Flux<String> streamAnswer(Question question, int topK, Double temperature) {
         return aiServiceExternalRepository.streamAnswer(question, topK, temperature);
     }
+
+    @Override
+    public Flux<String> streamAnswer(Question question, int topK, Double temperature,
+                                     java.util.List<Long> documentIds) {
+        return aiServiceExternalRepository.streamAnswer(question, topK, temperature, documentIds);
+    }
+
+    @Override
+    public String classifySentiment(String content) {
+        return aiServiceExternalRepository.classifySentiment(content);
+    }
 }

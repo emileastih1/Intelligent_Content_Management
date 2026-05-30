@@ -61,4 +61,14 @@ public class DocumentElasticSearchAdapter implements DocumentDomainElasticServic
         return null;
     }
 
+    @Override
+    public void deleteDocumentById(long id) {
+        try {
+            documentESConnectorRepository.deleteDocumentById(id);
+        } catch (IOException e) {
+            LOGGER.error("Error while deleting document with id {}: {}", id, e.getMessage());
+            throw new FunctionalException(MessageCode.DOCUMENT_NOT_FOUND, "Document cannot be deleted: " + e.getMessage());
+        }
+    }
+
 }

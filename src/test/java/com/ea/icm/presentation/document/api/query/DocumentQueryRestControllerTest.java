@@ -3,6 +3,8 @@ package com.ea.icm.presentation.document.api.query;
 import com.ea.icm.application.document.dto.DocumentDto;
 import com.ea.icm.application.document.port.query.DocumentManagementQueryService;
 import com.ea.icm.domain.document.model.DocumentAggregate;
+
+import java.util.List;
 import com.ea.icm.presentation.config.security.JwtSecurityConfig;
 import com.ea.icm.presentation.document.mapper.DocumentPresentationMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -99,7 +101,7 @@ public class DocumentQueryRestControllerTest {
     @DisplayName("Should return document given valid id")
     void should_return_document_given_valid_id() throws Exception {
         DocumentDto document = new DocumentDto(1L, "1212121212",
-                "Legal Document", "98785", "25 MB", "/home/documents");
+                "Legal Document", "the document body", List.of("law"), "legal", "Neutral", "98785", "25 MB", "/home/documents");
 
         DocumentAggregate documentAggregate = DocumentAggregate.builder()
                 .id(1L)

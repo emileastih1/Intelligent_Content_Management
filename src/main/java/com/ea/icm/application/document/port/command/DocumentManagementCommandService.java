@@ -8,5 +8,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public interface DocumentManagementCommandService {
-    public DocumentResult addDocument(DocumentAggregate documentAggregate);
+    DocumentResult addDocument(DocumentAggregate documentAggregate);
+
+    DocumentAggregate updateDocument(DocumentAggregate documentAggregate);
+
+    void deleteDocument(long id);
+
+    void batchUpdate(java.util.List<Long> documentIds, java.util.List<String> tagsToAdd, String category);
 }

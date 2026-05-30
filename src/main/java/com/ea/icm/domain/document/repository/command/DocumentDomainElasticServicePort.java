@@ -10,4 +10,6 @@ public interface DocumentDomainElasticServicePort {
 
     DocumentAggregate deleteDocument(DocumentAggregate document);
 
+    void deleteDocumentById(long id);
+
 }

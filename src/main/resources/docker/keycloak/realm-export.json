@@ -52,6 +52,19 @@
       "protocol": "openid-connect",
       "attributes": {},
       "authorizationServicesEnabled": false
+    },
+    {
+      "clientId": "icm-bff",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "icm-bff-secret",
+      "bearerOnly": false,
+      "publicClient": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "protocol": "openid-connect",
+      "attributes": {},
+      "authorizationServicesEnabled": false
     }
   ],
   "roles": {
@@ -87,6 +100,16 @@
       "credentials": [{ "type": "password", "value": "password", "temporary": false }],
       "clientRoles": {
         "intelligent-content-management-api": ["WRITE"]
+      }
+    },
+    {
+      "username": "service-account-icm-bff",
+      "enabled": true,
+      "emailVerified": true,
+      "serviceAccountClientId": "icm-bff",
+      "requiredActions": [],
+      "clientRoles": {
+        "intelligent-content-management-api": ["READ", "WRITE"]
       }
     }
   ]

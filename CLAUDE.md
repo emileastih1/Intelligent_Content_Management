@@ -14,4 +14,4 @@ Single-context repo — one `CONTEXT.md` + `docs/adr/` at the root. See `docs/ag
 
 ## Additional working directories
 
-When starting a new session, run `/add-dir C:\Users\eastih\Documents\Home\Dev\workspaces\ai_chat_dms_workspace\dms` to include the DMS workspace so agents have full context across both projects.
+When starting a new session, run `/add-dir C:\Users\eastih\Documents\Home\Dev\workspaces\archetype_ddd\dms` to include the DMS workspace so agents have full context across both projects.

@@ -17,10 +17,15 @@ import java.time.ZonedDateTime;
 @Mapper(componentModel = "spring")
 public interface DocumentPresentationMapper extends EntityMapperUtil {
     @Mapping(target = "owner", source = "creationUser")
+    @Mapping(target = "tags", source = "tags", qualifiedByName = "mapTagsToString")
     @Mapping(target = "fileSize", source = "fileSize", qualifiedByName = "mapStringToFileSize")
     DocumentAggregate dtoToDomain(DocumentDto document);
 
     @Mapping(target = "creationUser", source = "owner")
+    @Mapping(target = "content", source = "content")
+    @Mapping(target = "tags", source = "tags", qualifiedByName = "mapStringToTags")
+    @Mapping(target = "category", source = "category")
+    @Mapping(target = "sentiment", source = "sentiment")
     @Mapping(target = "fileSize", source = "fileSize", qualifiedByName = "mapFileSizeToString")
     DocumentDto domainToDto(DocumentAggregate document);
 
@@ -28,6 +33,9 @@ public interface DocumentPresentationMapper extends EntityMapperUtil {
     DocumentResult toDocumentResult(String documentResult);
 
     @Mapping(target = "documentName", source = "name")
+    @Mapping(target = "content", source = "content")
+    @Mapping(target = "tags", source = "tags", qualifiedByName = "mapTagsToString")
+    @Mapping(target = "category", source = "category")
     @Mapping(target = "file", source = "base64File", qualifiedByName = "mapBase64StringToByteArray")
     @Mapping(target = "fileSize", source = "fileSize", qualifiedByName = "mapStringToFileSize")
     @Mapping(target = "documentType", source = "fileType", qualifiedByName = "mapStringToDocumentType")

@@ -21,4 +21,14 @@ public class DocumentAiCommandServiceClientCommandAdapter implements AiServiceCl
     public void sendToVectorStore(DocumentAggregate aggregate) {
         aiServiceExternalRepository.sendToVectorStore(aggregate);
     }
+
+    @Override
+    public void deleteFromVectorStore(long documentId) {
+        aiServiceExternalRepository.deleteFromVectorStore(documentId);
+    }
+
+    @Override
+    public void embedContent(long documentId, String documentName, String content) {
+        aiServiceExternalRepository.embedContent(documentId, documentName, content);
+    }
 }
