@@ -1,0 +1,86 @@
+CURRICULUM VITAE
+================
+
+NAME:     Alex Morgan
+EMAIL:    alex.morgan@email.com
+PHONE:    +44 7911 123456
+LOCATION: London, United Kingdom
+
+---
+
+PROFESSIONAL SUMMARY
+--------------------
+Experienced Senior Software Engineer with 6 years of professional software development
+experience. Specialises in backend systems, cloud-native architectures, and distributed
+data pipelines. Proven track record of delivering high-availability services in
+regulated industries (finance, healthcare).
+
+---
+
+TECHNICAL SKILLS
+----------------
+Programming Languages:
+  - Java (6 years)
+  - Python (2 years)
+  - SQL (6 years)
+
+Frameworks & Libraries:
+  - Spring Boot, Spring Security, Spring Data JPA
+  - FastAPI (Python)
+  - JUnit 5, Mockito, Testcontainers
+
+Infrastructure & DevOps:
+  - Docker, Kubernetes, Helm
+  - PostgreSQL, Elasticsearch, Redis
+  - AWS (EC2, S3, RDS, Lambda)
+  - Terraform, GitHub Actions, Jenkins
+
+---
+
+PROFESSIONAL EXPERIENCE
+-----------------------
+
+Senior Software Engineer — TechCorp Ltd, London
+April 2021 – Present (3 years)
+  - Led the design and delivery of a document management platform processing
+    50,000 documents per day using Java, Spring Boot, and PostgreSQL.
+  - Introduced event-driven architecture (domain events, async listeners) that
+    reduced document indexing latency by 40%.
+  - Mentored a team of 4 junior engineers and conducted weekly code reviews.
+  - Migrated on-premise services to AWS, achieving 99.95% uptime SLA.
+
+Software Engineer — DataSoft Solutions, Edinburgh
+June 2018 – March 2021 (2 years 9 months)
+  - Built and maintained RESTful APIs serving 1 million daily active users.
+  - Implemented a real-time data pipeline using Kafka and PostgreSQL.
+  - Reduced CI/CD pipeline build times from 18 minutes to 4 minutes by
+    parallelising test suites with Testcontainers.
+  - Wrote comprehensive integration tests covering 85% of the service layer.
+
+---
+
+EDUCATION
+---------
+
+MSc Computer Science — University of Edinburgh
+September 2016 – June 2018
+  - Dissertation: "Optimising Vector Similarity Search in High-Dimensional Spaces"
+  - Grade: Distinction
+
+BSc Computer Science — University of Glasgow
+September 2013 – June 2016
+  - Grade: First Class Honours
+
+---
+
+CERTIFICATIONS
+--------------
+  - AWS Certified Solutions Architect – Associate (2022)
+  - Certified Kubernetes Administrator (CKA) (2023)
+
+---
+
+LANGUAGES
+---------
+  - English (Native)
+  - French (Intermediate)

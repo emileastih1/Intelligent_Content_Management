@@ -1,0 +1,42 @@
+[
+  {
+    "id": "Q1",
+    "question": "What programming languages does Alex Morgan know?",
+    "keywords": ["Java", "Python", "SQL"]
+  },
+  {
+    "id": "Q2",
+    "question": "How many years of Java experience does Alex Morgan have?",
+    "keywords": ["6"]
+  },
+  {
+    "id": "Q3",
+    "question": "What is Alex Morgan's most recent job title?",
+    "keywords": ["Senior Software Engineer"]
+  },
+  {
+    "id": "Q4",
+    "question": "When did Alex Morgan work at DataSoft Solutions?",
+    "keywords": ["2018", "2021", "DataSoft"]
+  },
+  {
+    "id": "Q5",
+    "question": "What degree does Alex Morgan hold and from which university?",
+    "keywords": ["MSc", "Edinburgh", "BSc", "Glasgow"]
+  },
+  {
+    "id": "Q6",
+    "question": "How many years of professional experience does Alex Morgan have?",
+    "keywords": ["6"]
+  },
+  {
+    "id": "Q7",
+    "question": "What AWS certifications does Alex Morgan hold?",
+    "keywords": ["AWS", "Solutions Architect", "2022"]
+  },
+  {
+    "id": "Q8",
+    "question": "List all companies Alex Morgan has worked for.",
+    "keywords": ["TechCorp", "DataSoft"]
+  }
+]
