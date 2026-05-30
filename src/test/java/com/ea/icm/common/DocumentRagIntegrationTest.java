@@ -1,6 +1,7 @@
 package com.ea.icm.common;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import com.ea.icm.infrastructure.persistance.document.model.DocumentElasticEntity;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import dasniko.testcontainers.keycloak.KeycloakContainer;
 import org.junit.jupiter.api.AfterAll;
@@ -18,6 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.web.client.RestClient;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.elasticsearch.ElasticsearchContainer;
@@ -100,6 +102,14 @@ class DocumentRagIntegrationTest {
         wireMock.resetAll();
     }
 
+    @BeforeEach
+    void ensureDocumentIndex() {
+        var indexOps = elasticsearchOperations.indexOps(DocumentElasticEntity.class);
+        if (!indexOps.exists()) {
+            indexOps.createWithMapping();
+        }
+    }
+
     @BeforeAll
     static void prepareKeycloakUsers() throws Exception {
         String adminTokenUrl = keycloak.getAuthServerUrl()
@@ -163,6 +173,9 @@ class DocumentRagIntegrationTest {
 
     @Autowired
     private ElasticsearchClient elasticsearchClient;
+
+    @Autowired
+    private ElasticsearchOperations elasticsearchOperations;
 
     @LocalServerPort
     private int port;
