@@ -13,4 +13,6 @@ public interface DocumentManagementCommandService {
     DocumentAggregate updateDocument(DocumentAggregate documentAggregate);
 
     void deleteDocument(long id);
+
+    void batchUpdate(java.util.List<Long> documentIds, java.util.List<String> tagsToAdd, String category);
 }

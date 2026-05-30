@@ -119,6 +119,31 @@ public class DocumentJpaAdapter implements DocumentDomainJpaServicePort {
     }
 
     @Override
+    public void batchUpdate(java.util.List<Long> documentIds, java.util.List<String> tagsToAdd, String category) {
+        for (Long id : documentIds) {
+            documentJpaRepository.findById(id).ifPresent(entity -> {
+                if (tagsToAdd != null && !tagsToAdd.isEmpty()) {
+                    java.util.List<String> existing = entity.getTags() == null || entity.getTags().isBlank()
+                            ? new java.util.ArrayList<>()
+                            : new java.util.ArrayList<>(java.util.Arrays.asList(entity.getTags().split(",")));
+                    for (String t : tagsToAdd) {
+                        String trimmed = t.trim();
+                        if (!trimmed.isEmpty() && !existing.contains(trimmed)) {
+                            existing.add(trimmed);
+                        }
+                    }
+                    entity.setTags(String.join(",", existing));
+                }
+                if (category != null) {
+                    entity.setCategory(category);
+                }
+                entity.setModificationDate(java.time.ZonedDateTime.now());
+                documentJpaRepository.save(entity);
+            });
+        }
+    }
+
+    @Override
     public void deleteDocument(long id) {
         if (!documentJpaRepository.existsById(id)) {
             throw new FunctionalException(MessageCode.DOCUMENT_NOT_FOUND, "Document not found: " + id);

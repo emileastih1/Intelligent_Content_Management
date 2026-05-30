@@ -8,4 +8,6 @@ public interface DocumentDomainJpaServicePort {
     DocumentAggregate updateDocument(DocumentAggregate document);
 
     void deleteDocument(long id);
+
+    void batchUpdate(java.util.List<Long> documentIds, java.util.List<String> tagsToAdd, String category);
 }

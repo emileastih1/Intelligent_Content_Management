@@ -55,4 +55,9 @@ public class DocumentManagementCommandServiceImpl implements DocumentManagementC
     public void deleteDocument(long id) {
         documentDomainJpaServicePort.deleteDocument(id);
     }
+
+    @Override
+    public void batchUpdate(java.util.List<Long> documentIds, java.util.List<String> tagsToAdd, String category) {
+        documentDomainJpaServicePort.batchUpdate(documentIds, tagsToAdd, category);
+    }
 }

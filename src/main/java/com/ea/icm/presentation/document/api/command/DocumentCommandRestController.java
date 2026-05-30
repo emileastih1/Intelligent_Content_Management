@@ -2,6 +2,7 @@ package com.ea.icm.presentation.document.api.command;
 
 import com.ea.icm.application.config.security.RestSecurityConfiguration;
 import com.ea.icm.application.document.dto.AddDocumentDto;
+import com.ea.icm.application.document.dto.BatchUpdateRequestDto;
 import com.ea.icm.application.document.dto.DocumentDto;
 import com.ea.icm.application.document.port.command.DocumentManagementCommandService;
 import com.ea.icm.domain.document.entity.DocumentResult;
@@ -31,10 +32,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class DocumentCommandRestController extends BaseRestController {
 
     private final DocumentManagementCommandService documentManagementCommandService;
-
     private final DocumentPresentationMapper documentPresentationMapper;
 
-    public DocumentCommandRestController(DocumentManagementCommandService documentManagementCommandService, DocumentPresentationMapper documentPresentationMapper) {
+    public DocumentCommandRestController(DocumentManagementCommandService documentManagementCommandService,
+                                         DocumentPresentationMapper documentPresentationMapper) {
         this.documentManagementCommandService = documentManagementCommandService;
         this.documentPresentationMapper = documentPresentationMapper;
     }
@@ -59,7 +60,7 @@ public class DocumentCommandRestController extends BaseRestController {
 
     @Operation(
             summary = "Update document",
-            description = "Update document name and/or content",
+            description = "Update document name, content, tags and/or category",
             security = {@SecurityRequirement(name = RestSecurityConfiguration.BEARER_AUTH, scopes = {RestSecurityConfiguration.PERM_WRITE})},
             responses = {
                     @ApiResponse(responseCode = "200", description = "ok", content = @Content(
@@ -78,12 +79,27 @@ public class DocumentCommandRestController extends BaseRestController {
     }
 
     @Operation(
+            summary = "Batch update documents",
+            description = "Apply tags-to-add and/or a category to a set of document IDs",
+            security = {@SecurityRequirement(name = RestSecurityConfiguration.BEARER_AUTH, scopes = {RestSecurityConfiguration.PERM_WRITE})},
+            responses = {@ApiResponse(responseCode = "200", description = "ok")}
+    )
+    @PreAuthorize("hasRole('WRITE')")
+    @PostMapping(value = "/v1/document/batch-update", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> batchUpdate(@RequestBody BatchUpdateRequestDto request) {
+        documentManagementCommandService.batchUpdate(
+                request.documentIds(),
+                request.updatePayload() != null ? request.updatePayload().tagsToAdd() : null,
+                request.updatePayload() != null ? request.updatePayload().category() : null
+        );
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Operation(
             summary = "Delete document",
             description = "Delete document by id",
             security = {@SecurityRequirement(name = RestSecurityConfiguration.BEARER_AUTH, scopes = {RestSecurityConfiguration.PERM_WRITE})},
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "ok")
-            }
+            responses = {@ApiResponse(responseCode = "200", description = "ok")}
     )
     @PreAuthorize("hasRole('WRITE')")
     @DeleteMapping(value = "/v1/document/{id}")
@@ -91,22 +107,4 @@ public class DocumentCommandRestController extends BaseRestController {
         documentManagementCommandService.deleteDocument(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
-/*    @Operation(
-            summary = "Upload document",
-            description = "Upload document",
-            security = {@SecurityRequirement(name = RestSecurityConfiguration.BEARER_AUTH, scopes = {RestSecurityConfiguration.PERM_WRITE})},
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "ok", content = @Content(
-                            schema = @Schema(implementation = DocumentDto.class)
-                    ))
-            }
-    )
-    @PutMapping(value = "/v1/document", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DocumentResult> uploadDocument(@Valid @RequestBody AddDocumentDto documentDto) {
-        DocumentAggregate documentAggregate = documentPresentationMapper.dtoAddDocumentToDomain(documentDto);
-        String documentResult = documentManagementCommandService.uploadDocument(documentAggregate);
-        DocumentResult result = documentPresentationMapper.toDocumentResult(documentResult);
-        return new ResponseEntity<>(result, HttpStatus.OK);
-    }*/
 }

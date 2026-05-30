@@ -805,6 +805,64 @@ class DocumentRagIntegrationTest {
     }
 
     // -------------------------------------------------------------------------
+    // Cycle 13: batch update — POST /v1/document/batch-update applies tags-to-add
+    //           and a category to a set of documentIds (slice #77)
+    // -------------------------------------------------------------------------
+
+    @Test
+    @DisplayName("Batch update applies tags and category to all targeted documents")
+    void batchUpdateAppliesTagsAndCategoryToTargetedDocuments() {
+        String writeToken = obtainToken("user-write", "password");
+        String readToken  = obtainToken("user-read", "password");
+
+        RestClient restClient = RestClient.create();
+
+        // Create two documents
+        String id1 = extractJsonField(restClient.post()
+                .uri("http://localhost:" + port + "/idm/api/v1/document")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + writeToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("{\"name\":\"Batch Doc A\",\"content\":\"content a\"}")
+                .retrieve().onStatus(s -> true, (q, r) -> {}).toEntity(String.class).getBody(), "id");
+
+        String id2 = extractJsonField(restClient.post()
+                .uri("http://localhost:" + port + "/idm/api/v1/document")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + writeToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("{\"name\":\"Batch Doc B\",\"content\":\"content b\"}")
+                .retrieve().onStatus(s -> true, (q, r) -> {}).toEntity(String.class).getBody(), "id");
+
+        // Batch update: add tag "batch-tag" and set category "ops" on both docs
+        ResponseEntity<String> batchResponse = restClient.post()
+                .uri("http://localhost:" + port + "/idm/api/v1/document/batch-update")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + writeToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("{\"documentIds\":[" + id1 + "," + id2 + "],"
+                        + "\"updatePayload\":{\"tagsToAdd\":[\"batch-tag\"],\"category\":\"ops\"}}")
+                .retrieve()
+                .onStatus(s -> true, (q, r) -> {})
+                .toEntity(String.class);
+
+        assertThat(batchResponse.getStatusCode().value())
+                .as("Batch update should return 200. Body: " + batchResponse.getBody())
+                .isEqualTo(HttpStatus.OK.value());
+
+        // Verify both docs now carry the tag and category via the list endpoint
+        ResponseEntity<String> listResponse = restClient.get()
+                .uri("http://localhost:" + port + "/idm/api/v1/document")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + readToken)
+                .retrieve().onStatus(s -> true, (q, r) -> {}).toEntity(String.class);
+
+        assertThat(listResponse.getBody())
+                .as("List should contain 'batch-tag' from batch update")
+                .contains("batch-tag");
+
+        assertThat(listResponse.getBody())
+                .as("List should contain category 'ops' from batch update")
+                .contains("ops");
+    }
+
+    // -------------------------------------------------------------------------
     // Helpers
     // -------------------------------------------------------------------------
 
