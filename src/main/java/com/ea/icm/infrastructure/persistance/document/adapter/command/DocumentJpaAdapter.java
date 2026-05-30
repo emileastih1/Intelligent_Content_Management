@@ -9,9 +9,12 @@ import com.ea.icm.domain.document.repository.command.DocumentDomainJpaServicePor
 import com.ea.icm.domain.exception.FunctionalException;
 import com.ea.icm.domain.exception.MessageCode;
 import com.ea.icm.infrastructure.persistance.document.adapter.DocumentInfrastructureMapper;
+import com.ea.icm.infrastructure.persistance.document.adapter.modules.extractor.DocumentExtractor;
 import com.ea.icm.infrastructure.persistance.document.model.DocumentEntity;
 import com.ea.icm.infrastructure.repository.document.DocumentJpaRepository;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
@@ -20,30 +23,47 @@ import java.time.ZonedDateTime;
 @Service
 public class DocumentJpaAdapter implements DocumentDomainJpaServicePort {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(DocumentJpaAdapter.class);
+
     private final DocumentJpaRepository documentJpaRepository;
     private final DocumentInfrastructureMapper documentInfrastructureMapper;
     private final DocumentIndexMapper documentUploadMapper;
     private final ApplicationEventPublisher applicationEventPublisher;
     private final DocumentDomainElasticServicePort documentDomainElasticServicePort;
+    private final DocumentExtractor documentExtractor;
 
     public DocumentJpaAdapter(DocumentInfrastructureMapper documentInfrastructureMapper,
                               DocumentIndexMapper documentUploadMapper,
                               DocumentJpaRepository documentJpaRepository,
                               ApplicationEventPublisher applicationEventPublisher,
-                              DocumentDomainElasticServicePort documentDomainElasticServicePort) {
+                              DocumentDomainElasticServicePort documentDomainElasticServicePort,
+                              DocumentExtractor documentExtractor) {
         this.documentInfrastructureMapper = documentInfrastructureMapper;
         this.documentUploadMapper = documentUploadMapper;
         this.documentJpaRepository = documentJpaRepository;
         this.applicationEventPublisher = applicationEventPublisher;
         this.documentDomainElasticServicePort = documentDomainElasticServicePort;
+        this.documentExtractor = documentExtractor;
     }
 
     @Override
     public long addDocument(DocumentAggregate documentAggregate) {
-        // The upload ingestion path provides a file: index it and send it to the vector store.
-        // The authoring ingestion path provides only text content (no file), so those
-        // file-based events are skipped here (ADR-0004 content-first Document).
+        // Upload ingestion path: extract text from file into content (ADR-0004),
+        // then fire index + vector-store events. Authoring path has no file, skip events.
         if (documentAggregate.getFile() != null) {
+            // Extract text into TEXT_CONTENT so the document is content-first
+            if (documentAggregate.getContent() == null) {
+                try {
+                    String extracted = documentExtractor.extract(documentAggregate.getFile()).getLeft();
+                    if (extracted != null && !extracted.isBlank()) {
+                        documentAggregate.setContent(extracted.trim());
+                    }
+                } catch (Exception e) {
+                    LOGGER.warn("Tika extraction failed for '{}', storing without text content: {}",
+                            documentAggregate.getDocumentName(), e.getMessage());
+                }
+            }
+
             DocumentFileCommand documentFileCommand = new DocumentFileCommand(
                     0L,
                     StringUtils.EMPTY,
@@ -52,9 +72,7 @@ public class DocumentJpaAdapter implements DocumentDomainJpaServicePort {
                     documentAggregate.getFile(),
                     null
             );
-            //Create the indexation event by applying the command to the aggregate
             documentAggregate.indexDocument(documentFileCommand);
-            //Save the document to the vector store (event registered on aggregate)
             documentAggregate.sendDocumentToEventStore(documentFileCommand);
         }
 

@@ -748,6 +748,63 @@ class DocumentRagIntegrationTest {
     }
 
     // -------------------------------------------------------------------------
+    // Cycle 12: upload ingestion path — file bytes are Tika-extracted into
+    //           TEXT_CONTENT so the uploaded document has editable content
+    //           (ADR-0004, slice #72)
+    // -------------------------------------------------------------------------
+
+    @Test
+    @DisplayName("Upload file then GET list returns document with extracted text content")
+    void uploadFileThenListReturnsDocumentWithExtractedContent() {
+        wireMock.stubFor(post(urlEqualTo("/AiServiceClient/v1/document"))
+                .willReturn(aResponse().withStatus(200)));
+
+        String writeToken = obtainToken("user-write", "password");
+        String readToken  = obtainToken("user-read", "password");
+
+        RestClient restClient = RestClient.create();
+
+        // "Hello from upload" as a plain-text file, base64-encoded
+        // Base64 of "Hello from upload"
+        String base64PlainText = java.util.Base64.getEncoder()
+                .encodeToString("Hello from upload".getBytes(java.nio.charset.StandardCharsets.UTF_8));
+
+        ResponseEntity<String> createResponse = restClient.post()
+                .uri("http://localhost:" + port + "/idm/api/v1/document")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + writeToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("{\"name\":\"upload-test.txt\","
+                        + "\"base64File\":\"" + base64PlainText + "\","
+                        + "\"fileType\":\"TXT\"}")
+                .retrieve()
+                .onStatus(status -> true, (req, res) -> {})
+                .toEntity(String.class);
+
+        assertThat(createResponse.getStatusCode().value())
+                .as("Upload should return 200. Body: " + createResponse.getBody())
+                .isEqualTo(HttpStatus.OK.value());
+
+        String docId = extractJsonField(createResponse.getBody(), "id");
+
+        // Wait briefly for async events then fetch the document by id
+        Awaitility.await().atMost(5, java.util.concurrent.TimeUnit.SECONDS)
+                .pollDelay(500, java.util.concurrent.TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> {
+                    ResponseEntity<String> getResponse = restClient.get()
+                            .uri("http://localhost:" + port + "/idm/api/v1/document/" + docId)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + readToken)
+                            .retrieve()
+                            .onStatus(status -> true, (req2, res2) -> {})
+                            .toEntity(String.class);
+
+                    assertThat(getResponse.getStatusCode().value()).isEqualTo(200);
+                    assertThat(getResponse.getBody())
+                            .as("GET should contain the extracted text from the uploaded file")
+                            .contains("Hello from upload");
+                });
+    }
+
+    // -------------------------------------------------------------------------
     // Helpers
     // -------------------------------------------------------------------------
 
