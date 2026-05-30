@@ -2,6 +2,8 @@ package com.ea.icm.infrastructure.persistance.document.adapter.command;
 
 import com.ea.icm.domain.document.mapper.DocumentIndexMapper;
 import com.ea.icm.domain.document.model.DocumentAggregate;
+import com.ea.icm.domain.document.events.event.ai.DocumentClassifySentimentEvent;
+import com.ea.icm.domain.document.events.event.ai.DocumentDeleteFromVectorStoreEvent;
 import com.ea.icm.domain.document.events.event.elastic.DocumentUploadFileEvent;
 import com.ea.icm.domain.document.model.DocumentFileCommand;
 import com.ea.icm.domain.document.repository.command.DocumentDomainElasticServicePort;
@@ -82,6 +84,13 @@ public class DocumentJpaAdapter implements DocumentDomainJpaServicePort {
 
         documentAggregate.pullDomainEvents().forEach(applicationEventPublisher::publishEvent);
 
+        // Async sentiment classification — fires after commit (ADR-0007)
+        String contentForSentiment = documentAggregate.getContent();
+        if (contentForSentiment != null && !contentForSentiment.isBlank()) {
+            applicationEventPublisher.publishEvent(
+                    new DocumentClassifySentimentEvent(id, contentForSentiment));
+        }
+
         return id;
     }
 
@@ -108,11 +117,14 @@ public class DocumentJpaAdapter implements DocumentDomainJpaServicePort {
 
         DocumentEntity saved = documentJpaRepository.save(existing);
 
-        // Re-index in Elasticsearch if content changed (ADR-0004)
         DocumentAggregate updated = documentInfrastructureMapper.jpaEntityToDomain(saved);
+
         if (documentAggregate.getContent() != null) {
-            DocumentUploadFileEvent event = new DocumentUploadFileEvent(updated, null);
-            applicationEventPublisher.publishEvent(event);
+            // Re-index in Elasticsearch (ADR-0004)
+            applicationEventPublisher.publishEvent(new DocumentUploadFileEvent(updated, null));
+            // Re-classify sentiment for updated content (ADR-0007)
+            applicationEventPublisher.publishEvent(
+                    new DocumentClassifySentimentEvent(id, documentAggregate.getContent()));
         }
 
         return updated;
@@ -150,5 +162,7 @@ public class DocumentJpaAdapter implements DocumentDomainJpaServicePort {
         }
         documentJpaRepository.deleteById(id);
         documentDomainElasticServicePort.deleteDocumentById(id);
+        // Purge vector-store chunks for this document (ADR-0007)
+        applicationEventPublisher.publishEvent(new DocumentDeleteFromVectorStoreEvent(id));
     }
 }

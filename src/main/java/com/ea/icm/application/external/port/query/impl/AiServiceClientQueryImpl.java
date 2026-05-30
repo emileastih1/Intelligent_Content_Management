@@ -7,6 +7,8 @@ import com.ea.icm.domain.externe.repository.query.AiServiceClientQueryPort;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
+import java.util.List;
+
 @Service
 public class AiServiceClientQueryImpl implements AiServiceClientQuery {
     AiServiceClientQueryPort aiServiceClientQueryPort;
@@ -23,5 +25,15 @@ public class AiServiceClientQueryImpl implements AiServiceClientQuery {
     @Override
     public Flux<String> streamAnswer(Question question, int topK, Double temperature) {
         return aiServiceClientQueryPort.streamAnswer(question, topK, temperature);
+    }
+
+    @Override
+    public Flux<String> streamAnswer(Question question, int topK, Double temperature, List<Long> documentIds) {
+        return aiServiceClientQueryPort.streamAnswer(question, topK, temperature, documentIds);
+    }
+
+    @Override
+    public String classifySentiment(String content) {
+        return aiServiceClientQueryPort.classifySentiment(content);
     }
 }

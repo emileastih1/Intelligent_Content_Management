@@ -25,6 +25,7 @@ public interface DocumentPresentationMapper extends EntityMapperUtil {
     @Mapping(target = "content", source = "content")
     @Mapping(target = "tags", source = "tags", qualifiedByName = "mapStringToTags")
     @Mapping(target = "category", source = "category")
+    @Mapping(target = "sentiment", source = "sentiment")
     @Mapping(target = "fileSize", source = "fileSize", qualifiedByName = "mapFileSizeToString")
     DocumentDto domainToDto(DocumentAggregate document);
 

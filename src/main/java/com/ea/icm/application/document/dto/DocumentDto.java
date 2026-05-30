@@ -10,6 +10,7 @@ public record DocumentDto(long id,
                           String content,
                           List<String> tags,
                           String category,
+                          String sentiment,
                           String creationUser,
                           //This field holds the size and the measurement
                           String fileSize,

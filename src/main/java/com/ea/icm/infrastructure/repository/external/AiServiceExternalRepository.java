@@ -34,4 +34,17 @@ public class AiServiceExternalRepository {
         LOGGER.info("AiServiceExternalRepository.streamAnswer topK: {}, temperature: {}", topK, temperature);
         return documentAiRestClient.streamAnswer(question, topK, temperature);
     }
+
+    public Flux<String> streamAnswer(Question question, int topK, Double temperature,
+                                     java.util.List<Long> documentIds) {
+        return documentAiRestClient.streamAnswer(question, topK, temperature, documentIds);
+    }
+
+    public void deleteFromVectorStore(long documentId) {
+        documentAiRestClient.deleteFromVectorStore(documentId);
+    }
+
+    public String classifySentiment(String content) {
+        return documentAiRestClient.classifySentiment(content);
+    }
 }

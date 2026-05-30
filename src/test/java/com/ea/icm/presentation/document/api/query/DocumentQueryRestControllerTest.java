@@ -101,7 +101,7 @@ public class DocumentQueryRestControllerTest {
     @DisplayName("Should return document given valid id")
     void should_return_document_given_valid_id() throws Exception {
         DocumentDto document = new DocumentDto(1L, "1212121212",
-                "Legal Document", "the document body", List.of("law"), "legal", "98785", "25 MB", "/home/documents");
+                "Legal Document", "the document body", List.of("law"), "legal", "Neutral", "98785", "25 MB", "/home/documents");
 
         DocumentAggregate documentAggregate = DocumentAggregate.builder()
                 .id(1L)

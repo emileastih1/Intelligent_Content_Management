@@ -84,6 +84,16 @@
         />
     </changeSet>
 
+    <!-- Change Set for content-first Document: add sentiment column (ADR-0007) -->
+    <changeSet id="add-document-sentiment" author="eas" failOnError="true">
+        <comment>add SENTIMENT column to document for AI-derived classification</comment>
+        <sqlFile
+                path="db/changelog/DocumentContent-DOC_MANAGEMENT_DB/sprint1/release1/model/DOCUMENT-add-sentiment.sql"
+                splitStatements="true"
+                stripComments="true"
+        />
+    </changeSet>
+
     <changeSet id="grant_all_privileges" author="eas" failOnError="true">
         <validCheckSum>ANY</validCheckSum>
         <comment>grant all privileges to postgres</comment>

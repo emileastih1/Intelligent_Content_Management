@@ -53,6 +53,9 @@ public class DocumentAggregate extends AbstractAggregateRoot<DocumentAggregate> 
     @Column(name = "CATEGORY")
     private String category;
 
+    @Column(name = "SENTIMENT")
+    private String sentiment;
+
     @Transient
     private String owner;
 

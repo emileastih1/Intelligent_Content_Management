@@ -34,6 +34,9 @@ public class DocumentEntity {
     @Column(name = "CATEGORY")
     private String category;
 
+    @Column(name = "SENTIMENT")
+    private String sentiment;
+
     @Column(name = "FILE_SIZE")
     private String fileSize;
 

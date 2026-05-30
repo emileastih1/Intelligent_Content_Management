@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 
+import java.util.List;
+
 @RestController
 @Tag(name = "AiServiceClient", description = "API gateway to communicate with the external AI Service Client")
 public class AiServiceClientQueryRestController extends BaseRestController {
@@ -46,7 +48,8 @@ public class AiServiceClientQueryRestController extends BaseRestController {
     public Flux<String> askQuestion(
             @RequestBody @Valid Question question,
             @RequestParam(defaultValue = "2") int topK,
-            @RequestParam(required = false) Double temperature) {
-        return aiServiceClientQuery.streamAnswer(question, topK, temperature);
+            @RequestParam(required = false) Double temperature,
+            @RequestParam(required = false) List<Long> documentIds) {
+        return aiServiceClientQuery.streamAnswer(question, topK, temperature, documentIds);
     }
 }
