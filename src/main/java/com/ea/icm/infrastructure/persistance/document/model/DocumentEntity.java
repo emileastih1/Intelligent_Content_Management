@@ -28,6 +28,12 @@ public class DocumentEntity {
     @Column(name = "TEXT_CONTENT")
     private String textContent;
 
+    @Column(name = "TAGS")
+    private String tags;
+
+    @Column(name = "CATEGORY")
+    private String category;
+
     @Column(name = "FILE_SIZE")
     private String fileSize;
 

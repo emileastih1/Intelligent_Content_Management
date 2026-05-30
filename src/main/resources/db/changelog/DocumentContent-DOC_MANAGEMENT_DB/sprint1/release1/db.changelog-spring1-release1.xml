@@ -74,6 +74,16 @@
         />
     </changeSet>
 
+    <!-- Change Set for content-first Document: add tags and category columns (ADR-0004) -->
+    <changeSet id="add-document-tags-category" author="eas" failOnError="true">
+        <comment>add TAGS (comma-separated) and CATEGORY columns to document</comment>
+        <sqlFile
+                path="db/changelog/DocumentContent-DOC_MANAGEMENT_DB/sprint1/release1/model/DOCUMENT-add-tags-category.sql"
+                splitStatements="true"
+                stripComments="true"
+        />
+    </changeSet>
+
     <changeSet id="grant_all_privileges" author="eas" failOnError="true">
         <validCheckSum>ANY</validCheckSum>
         <comment>grant all privileges to postgres</comment>

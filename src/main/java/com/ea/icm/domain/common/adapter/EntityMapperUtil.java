@@ -9,7 +9,11 @@ import org.mapstruct.Named;
 
 import java.io.File;
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.Base64;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public interface EntityMapperUtil {
     @Named("mapUniqueIdToString")
@@ -85,5 +89,17 @@ public interface EntityMapperUtil {
     @Named("mapStringToZonedDateTime")
     default ZonedDateTime mapStringToZonedDateTime(String zonedDateTime) {
         return zonedDateTime != null ? ZonedDateTime.parse(zonedDateTime) : null;
+    }
+
+    @Named("mapTagsToString")
+    default String mapTagsToString(List<String> tags) {
+        if (tags == null || tags.isEmpty()) return null;
+        return tags.stream().filter(t -> t != null && !t.isBlank()).collect(Collectors.joining(","));
+    }
+
+    @Named("mapStringToTags")
+    default List<String> mapStringToTags(String tags) {
+        if (tags == null || tags.isBlank()) return Collections.emptyList();
+        return Arrays.stream(tags.split(",")).map(String::trim).filter(t -> !t.isEmpty()).collect(Collectors.toList());
     }
 }

@@ -50,4 +50,9 @@ public class DocumentManagementCommandServiceImpl implements DocumentManagementC
     public DocumentAggregate updateDocument(DocumentAggregate documentAggregate) {
         return documentDomainJpaServicePort.updateDocument(documentAggregate);
     }
+
+    @Override
+    public void deleteDocument(long id) {
+        documentDomainJpaServicePort.deleteDocument(id);
+    }
 }

@@ -6,4 +6,6 @@ public interface DocumentDomainJpaServicePort {
     long addDocument(DocumentAggregate document);
 
     DocumentAggregate updateDocument(DocumentAggregate document);
+
+    void deleteDocument(long id);
 }

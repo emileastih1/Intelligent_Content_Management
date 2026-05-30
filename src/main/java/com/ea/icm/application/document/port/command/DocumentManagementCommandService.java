@@ -11,4 +11,6 @@ public interface DocumentManagementCommandService {
     DocumentResult addDocument(DocumentAggregate documentAggregate);
 
     DocumentAggregate updateDocument(DocumentAggregate documentAggregate);
+
+    void deleteDocument(long id);
 }

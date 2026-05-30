@@ -1,5 +1,8 @@
 package com.ea.icm.infrastructure.persistance.document.adapter.query;
 
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
+import co.elastic.clients.elasticsearch.core.SearchResponse;
+import co.elastic.clients.elasticsearch.core.search.Hit;
 import com.ea.icm.domain.document.model.DocumentAggregate;
 import com.ea.icm.domain.document.repository.query.DocumentDomainQueryServicePort;
 import com.ea.icm.domain.exception.FunctionalException;
@@ -10,10 +13,12 @@ import com.ea.icm.infrastructure.repository.document.DocumentESConnectorReposito
 import com.ea.icm.infrastructure.repository.document.DocumentJpaRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class DocumentElasticSearchQueryAdapter implements DocumentDomainQueryServicePort {
@@ -83,5 +88,19 @@ public class DocumentElasticSearchQueryAdapter implements DocumentDomainQuerySer
     @Override
     public DocumentAggregate extractDocumentByFilter(DocumentAggregate documentAggregate) {
         return null;
+    }
+
+    @Override
+    public List<DocumentAggregate> search(String query) {
+        try {
+            List<DocumentElasticEntity> results = documentESConnectorRepository.searchByQuery(query);
+            return results.stream()
+                    .map(documentInfrastructureMapper::entityToDomain)
+                    .collect(Collectors.toList());
+        } catch (IOException e) {
+            LOGGER.error("Error while searching documents: {}", e.getMessage());
+            throw new FunctionalException(MessageCode.DOCUMENT_NOT_FOUND,
+                    "Search failed: " + e.getMessage());
+        }
     }
 }

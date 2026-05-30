@@ -47,6 +47,12 @@ public class DocumentAggregate extends AbstractAggregateRoot<DocumentAggregate> 
     @Column(name = "TEXT_CONTENT")
     private String content;
 
+    @Column(name = "TAGS")
+    private String tags;
+
+    @Column(name = "CATEGORY")
+    private String category;
+
     @Transient
     private String owner;
 

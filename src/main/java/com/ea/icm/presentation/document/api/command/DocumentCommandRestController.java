@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -74,6 +75,21 @@ public class DocumentCommandRestController extends BaseRestController {
         aggregate.setId(id);
         DocumentAggregate updated = documentManagementCommandService.updateDocument(aggregate);
         return new ResponseEntity<>(documentPresentationMapper.domainToDto(updated), HttpStatus.OK);
+    }
+
+    @Operation(
+            summary = "Delete document",
+            description = "Delete document by id",
+            security = {@SecurityRequirement(name = RestSecurityConfiguration.BEARER_AUTH, scopes = {RestSecurityConfiguration.PERM_WRITE})},
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "ok")
+            }
+    )
+    @PreAuthorize("hasRole('WRITE')")
+    @DeleteMapping(value = "/v1/document/{id}")
+    public ResponseEntity<Void> deleteDocument(@PathVariable long id) {
+        documentManagementCommandService.deleteDocument(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 /*    @Operation(

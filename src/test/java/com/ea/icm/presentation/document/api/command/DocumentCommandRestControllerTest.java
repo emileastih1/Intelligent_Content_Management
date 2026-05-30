@@ -84,7 +84,7 @@ class DocumentCommandRestControllerTest {
         @Test
         @DisplayName("No token -> 401 Unauthorized")
         void whenNoToken_thenUnauthorized() throws Exception {
-            AddDocumentDto addDocumentDto = new AddDocumentDto("TestDocument", null, "base64File", "15 MB", "JPG");
+            AddDocumentDto addDocumentDto = new AddDocumentDto("TestDocument", null, null, null, "base64File", "15 MB", "JPG");
             mockMvc.perform(MockMvcRequestBuilders
                             .post("/api/v1/document")
                             .content(objectMapper.writeValueAsString(addDocumentDto))
@@ -97,7 +97,7 @@ class DocumentCommandRestControllerTest {
         @Test
         @DisplayName("Wrong role (ROLE_READ) -> 403 Forbidden")
         void whenWrongRole_thenForbidden() throws Exception {
-            AddDocumentDto addDocumentDto = new AddDocumentDto("TestDocument", null, "base64File", "15 MB", "JPG");
+            AddDocumentDto addDocumentDto = new AddDocumentDto("TestDocument", null, null, null, "base64File", "15 MB", "JPG");
             mockMvc.perform(MockMvcRequestBuilders
                             .post("/api/v1/document")
                             .content(objectMapper.writeValueAsString(addDocumentDto))
@@ -116,7 +116,7 @@ class DocumentCommandRestControllerTest {
         @Test
         @DisplayName("With valid data then add document")
         void whenPostRequestToAddDocumentWithValidData_thenAddDocument() throws Exception {
-            AddDocumentDto addDocumentDto = new AddDocumentDto("TestDocument", null, "base64File", "15 MB", "JPG");
+            AddDocumentDto addDocumentDto = new AddDocumentDto("TestDocument", null, null, null, "base64File", "15 MB", "JPG");
 
             DocumentResult documentResult = new DocumentResult("123", "", "", "", DocumentStatus.CREATED.name());
             DocumentAggregate documentAggregate = DocumentAggregate.builder()
@@ -147,7 +147,7 @@ class DocumentCommandRestControllerTest {
         @Test
         @DisplayName("With empty document name then bad request")
         void whenPostRequestToAddDocumentWithEmptyName_thenThrowMethodArgumentNotValidException() throws Exception {
-            AddDocumentDto addDocumentDto = new AddDocumentDto("", null, "base64File", "15 MB", "JPG");
+            AddDocumentDto addDocumentDto = new AddDocumentDto("", null, null, null, "base64File", "15 MB", "JPG");
 
             mockMvc.perform(MockMvcRequestBuilders
                             .post("/api/v1/document")
@@ -168,7 +168,7 @@ class DocumentCommandRestControllerTest {
         void whenPostRequestToAuthorDocumentWithoutFile_thenOk() throws Exception {
             // Content-first: base64File and fileType are no longer mandatory; authored
             // content alone is a valid Document (ADR-0004).
-            AddDocumentDto addDocumentDto = new AddDocumentDto("TestDocument", "hello world", null, null, null);
+            AddDocumentDto addDocumentDto = new AddDocumentDto("TestDocument", "hello world", null, null, null, null, null);
 
             mockMvc.perform(MockMvcRequestBuilders
                             .post("/api/v1/document")

@@ -45,4 +45,9 @@ public class DocumentManagementQueryServiceImpl implements DocumentManagementQue
         return null;
     }
 
+    @Override
+    public List<DocumentAggregate> searchDocuments(String query) {
+        return documentDomainQueryServicePort.search(query);
+    }
+
 }

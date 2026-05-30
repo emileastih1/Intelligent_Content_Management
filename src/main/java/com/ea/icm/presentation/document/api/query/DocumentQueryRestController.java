@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -65,6 +66,25 @@ public class DocumentQueryRestController extends BaseRestController {
     @GetMapping(value = "/v1/document", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<DocumentDto>> listDocuments() {
         List<DocumentDto> documents = documentManagementQueryService.listDocuments().stream()
+                .map(documentPresentationMapper::domainToDto)
+                .toList();
+        return new ResponseEntity<>(documents, HttpStatus.OK);
+    }
+
+    @Operation(
+            summary = "Full-text search documents",
+            description = "Search documents by name or content using Elasticsearch full-text search",
+            security = {@SecurityRequirement(name = RestSecurityConfiguration.BEARER_AUTH, scopes = {RestSecurityConfiguration.PERM_READ})},
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "ok", content = @Content(
+                            schema = @Schema(implementation = DocumentDto.class)
+                    ))
+            }
+    )
+    @PreAuthorize("hasRole('READ')")
+    @GetMapping(value = "/v1/document/search", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<DocumentDto>> searchDocuments(@RequestParam("q") String query) {
+        List<DocumentDto> documents = documentManagementQueryService.searchDocuments(query).stream()
                 .map(documentPresentationMapper::domainToDto)
                 .toList();
         return new ResponseEntity<>(documents, HttpStatus.OK);

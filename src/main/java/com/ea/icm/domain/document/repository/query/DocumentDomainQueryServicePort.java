@@ -17,4 +17,6 @@ public interface DocumentDomainQueryServicePort {
 
     DocumentAggregate extractDocumentByFilter(DocumentAggregate documentAggregate);
 
+    List<DocumentAggregate> search(String query);
+
 }

@@ -21,4 +21,6 @@ public interface DocumentManagementQueryService {
 
     DocumentAggregate extractDocumentByFilter(DocumentAggregate documentAggregate);
 
+    List<DocumentAggregate> searchDocuments(String query);
+
 }

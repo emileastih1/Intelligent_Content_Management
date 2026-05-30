@@ -138,4 +138,19 @@ public class DocumentESConnectorRepository {
     public String uploadDocument(DocumentElasticEntity documentElasticEntity) {
         return "Document uploaded successfully!";
     }
+
+    public List<DocumentElasticEntity> searchByQuery(String query) throws IOException {
+        SearchResponse<DocumentElasticEntity> response = elasticsearchClient.search(req ->
+                        req.index(index)
+                                .size(100)
+                                .query(q ->
+                                        q.multiMatch(m ->
+                                                m.query(query)
+                                                 .fields("documentName", "documentContent"))),
+                DocumentElasticEntity.class);
+
+        return response.hits().hits().stream()
+                .map(Hit::source)
+                .collect(Collectors.toList());
+    }
 }
