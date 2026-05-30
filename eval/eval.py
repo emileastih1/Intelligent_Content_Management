@@ -99,7 +99,7 @@ def ask_question(
     top_k: int,
     temperature: float,
 ) -> str:
-    """Send a question to the ICM ask endpoint and return the answer string."""
+    """Send a question to the ICM ask endpoint and accumulate the SSE stream."""
     url = f"{icm_url}/idm/api/v1/document/ask?topK={top_k}&temperature={temperature}"
     response = requests.post(
         url,
@@ -108,9 +108,20 @@ def ask_question(
             "Authorization": f"Bearer {token}",
             "Content-Type": "application/json",
         },
+        stream=True,
     )
     response.raise_for_status()
-    return response.json()["answer"]
+    tokens: List[str] = []
+    for raw_line in response.iter_lines(decode_unicode=True):
+        if not raw_line or not raw_line.startswith("data:"):
+            continue
+        value = raw_line[len("data:"):].lstrip(" ")
+        if value == "[DONE]":
+            break
+        if value == "[STREAM_ERROR]":
+            raise RuntimeError("ICM streaming error: [STREAM_ERROR] received")
+        tokens.append(value)
+    return "".join(tokens)
 
 
 def check_keywords(
