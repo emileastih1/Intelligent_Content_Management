@@ -1,0 +1,6 @@
+{
+  "name": "Document Analyst AI",
+  "description": "An interactive document manager and AI assistant that analyzes multiple files, visualizes document metric charts, and streams AI insights.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
